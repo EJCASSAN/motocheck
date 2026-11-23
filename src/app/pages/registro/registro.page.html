@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>MotoCheck</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="margin-bottom: 20px;">
+    <h1 style="margin-bottom: 6px; font-weight: 700;">Bienvenido a MotoCheck</h1>
+    <ion-text color="medium">
+      <p style="margin-top: 0;">
+        Registra tu moto una sola vez y te avisaremos cuándo toca cada mantenimiento.
+      </p>
+    </ion-text>
+  </div>
+
+  <ion-item fill="outline" class="ion-margin-bottom">
+    <ion-input
+      label="Marca"
+      labelPlacement="stacked"
+      placeholder="Ej. Yamaha"
+      [(ngModel)]="marca">
+    </ion-input>
+  </ion-item>
+
+  <ion-item fill="outline" class="ion-margin-bottom">
+    <ion-input
+      label="Línea / Modelo"
+      labelPlacement="stacked"
+      placeholder="Ej. MT-03"
+      [(ngModel)]="modelo">
+    </ion-input>
+  </ion-item>
+
+  <ion-item fill="outline" class="ion-margin-bottom">
+    <ion-input
+      label="Cilindraje (cc)"
+      labelPlacement="stacked"
+      type="number"
+      placeholder="Ej. 321"
+      [(ngModel)]="cilindraje">
+    </ion-input>
+  </ion-item>
+
+  <ion-item fill="outline" class="ion-margin-bottom">
+    <ion-input
+      label="Placa"
+      labelPlacement="stacked"
+      placeholder="Ej. ABC12D"
+      [(ngModel)]="placa">
+    </ion-input>
+  </ion-item>
+
+  <ion-item fill="outline" class="ion-margin-bottom">
+    <ion-input
+      label="Kilometraje actual del odómetro (km)"
+      labelPlacement="stacked"
+      type="number"
+      placeholder="Ej. 34250"
+      [(ngModel)]="kilometrajeActual">
+    </ion-input>
+  </ion-item>
+
+  <ion-text color="danger" *ngIf="mensajeError">
+    <p class="ion-padding-start">{{ mensajeError }}</p>
+  </ion-text>
+
+  <ion-card color="light" class="ion-margin-vertical">
+    <ion-card-content style="display: flex; align-items: center; gap: 10px;">
+      <ion-icon name="shield-checkmark-outline" size="large" color="success"></ion-icon>
+      <small>
+        Tus datos se guardan solo en este teléfono. Funciona 100% sin internet, incluso en carretera.
+      </small>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="warning" (click)="guardarPerfil()">
+    Comenzar a monitorear
+    <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+  </ion-button>
+</ion-content>

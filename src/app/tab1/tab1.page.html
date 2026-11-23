@@ -1,0 +1,148 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ perfil ? perfil.marca + ' ' + perfil.modelo : 'MotoCheck' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="irAAjustes()">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Tarjeta de Odómetro (RF-02) -->
+  <ion-card *ngIf="perfil" (click)="abrirModalKm()" button="true">
+    <ion-card-header>
+      <ion-card-subtitle>
+        ODÓMETRO ACTUAL • PLACA {{ perfil.placa }} ({{ perfil.cilindraje }} cc)
+      </ion-card-subtitle>
+      <ion-card-title style="font-size: 2rem; font-weight: 800;">
+        {{ perfil.kilometrajeActual | number }} km
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" color="warning">
+        <ion-icon slot="start" name="speedometer-outline"></ion-icon>
+        Actualizar kilometraje
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Resumen de Semaforización -->
+  <div style="display: flex; justify-content: space-around; margin: 12px 0;">
+    <ion-badge color="danger" style="padding: 8px 12px;">
+      {{ totalVencidos }} Vencidos
+    </ion-badge>
+    <ion-badge color="warning" style="padding: 8px 12px;">
+      {{ totalProximos }} Próximos
+    </ion-badge>
+    <ion-badge color="success" style="padding: 8px 12px;">
+      {{ totalOptimos }} Al día
+    </ion-badge>
+  </div>
+
+  <!-- Lista de Alertas Preventivas (RF-05) -->
+  <h3 style="margin-top: 16px; font-weight: 700;">Mantenimientos</h3>
+  <ion-list>
+    <ion-item
+      *ngFor="let alerta of alertas"
+      button="true"
+      (click)="abrirModalServicio(alerta.tipo)">
+      <ion-label>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2><strong>{{ alerta.nombre }}</strong></h2>
+          <ion-badge [color]="colorEstado(alerta.estado)">
+            {{ etiquetaEstado(alerta.estado) }}
+          </ion-badge>
+        </div>
+        <p *ngIf="alerta.kmRestantes >= 0">
+          Faltan {{ alerta.kmRestantes | number }} km (cada {{ alerta.intervaloKm | number }} km)
+        </p>
+        <p *ngIf="alerta.kmRestantes < 0" style="color: var(--ion-color-danger);">
+          Superado por {{ (alerta.kmRestantes * -1) | number }} km
+        </p>
+        <ion-progress-bar
+          style="margin-top: 6px;"
+          [value]="alerta.porcentajeUso / 100"
+          [color]="colorEstado(alerta.estado)">
+        </ion-progress-bar>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- MODAL: Actualizar Kilometraje (RF-02) -->
+  <ion-modal [isOpen]="modalKmAbierto" (didDismiss)="modalKmAbierto = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Actualizar kilometraje</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modalKmAbierto = false">Cancelar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input
+            label="Nuevo valor del odómetro (km)"
+            labelPlacement="stacked"
+            type="number"
+            [(ngModel)]="nuevoKilometraje">
+          </ion-input>
+        </ion-item>
+        <ion-button expand="block" color="warning" (click)="guardarKilometraje()">
+          Guardar kilometraje
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- MODAL: Nuevo Servicio Precargado (RF-03) -->
+  <ion-modal [isOpen]="modalServicioAbierto" (didDismiss)="modalServicioAbierto = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo servicio</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modalServicioAbierto = false">Cancelar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-select label="Tipo de mantenimiento" labelPlacement="stacked" [(ngModel)]="servicioTipo">
+            <ion-select-option value="aceite">Aceite de motor</ion-select-option>
+            <ion-select-option value="cadena">Tensión de cadena</ion-select-option>
+            <ion-select-option value="frenos">Pastillas de freno</ion-select-option>
+            <ion-select-option value="filtros">Filtro de aire</ion-select-option>
+            <ion-select-option value="bujias">Bujías</ion-select-option>
+            <ion-select-option value="kit_arrastre">Kit de arrastre</ion-select-option>
+            <ion-select-option value="otro">Otro</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Kilometraje (km)" labelPlacement="stacked" type="number" [(ngModel)]="servicioKm"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Fecha" labelPlacement="stacked" type="date" [(ngModel)]="servicioFecha"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Costo (COP)" labelPlacement="stacked" type="number" placeholder="Ej. 85000" [(ngModel)]="servicioCosto"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-textarea label="Insumos y notas" labelPlacement="stacked" rows="3" [(ngModel)]="servicioNotas"></ion-textarea>
+        </ion-item>
+
+        <ion-button expand="block" color="warning" (click)="guardarServicio()">
+          Guardar en bitácora
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

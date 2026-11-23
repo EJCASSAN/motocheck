@@ -1,0 +1,7 @@
+{
+  "name": "motocheck",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
