@@ -2,23 +2,28 @@ import type { ElementRef } from '@angular/core';
 import { Component, computed, inject, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon, IonToggle, NavController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { IDIOMAS, idiomaActual, t } from '../../i18n/idioma';
+import type { Idioma } from '../../i18n/idioma';
+import { IdiomaService } from '../../i18n/idioma.service';
 import { AvisosService } from '../../services/avisos.service';
 import { RespaldoService } from '../../services/respaldo.service';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
-import { fechaLocal, formatoPlaca, miles } from '../../utils/formato';
+import { fechaCorta, formatoPlaca, miles } from '../../utils/formato';
 
 @Component({
   selector: 'app-ajustes',
   templateUrl: './ajustes.page.html',
   styleUrls: ['./ajustes.page.scss'],
-  imports: [IonContent, IonIcon, IonToggle, RouterLink],
+  imports: [IonContent, IonIcon, IonToggle, RouterLink, TranslocoPipe],
 })
 export class AjustesPage {
   private storage = inject(StorageService);
   private respaldo = inject(RespaldoService);
   private avisos = inject(AvisosService);
+  private idiomas = inject(IdiomaService);
   private ui = inject(UiService);
   private nav = inject(NavController);
   private router = inject(Router);
@@ -29,10 +34,12 @@ export class AjustesPage {
   readonly formatoPlaca = formatoPlaca;
   readonly perfil = this.storage.perfil;
   readonly preferencias = this.storage.preferencias;
+  readonly idioma = idiomaActual.asReadonly();
+  readonly opcionesIdioma = IDIOMAS;
 
   readonly ultimoRespaldo = computed(() => {
     const f = this.preferencias().ultimoRespaldo;
-    return f ? fechaLocal(f).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'nunca';
+    return f ? fechaCorta(f) : t('ajustes.nunca');
   });
 
   readonly espacio = computed(() => {
@@ -45,26 +52,36 @@ export class AjustesPage {
     this.nav.back();
   }
 
+  async cambiarIdioma(idioma: Idioma): Promise<void> {
+    if (idioma === this.idioma()) return;
+    try {
+      await this.idiomas.cambiar(idioma);
+      await this.ui.aviso(t('ajustes.idiomaCambiado'));
+    } catch {
+      await this.ui.aviso(t('ajustes.idiomaError'), 'danger');
+    }
+  }
+
   async cambiarAvisos(evento: CustomEvent<{ checked: boolean }>): Promise<void> {
     const activar = evento.detail.checked;
     if (activar && !(await this.avisos.solicitarPermiso())) {
-      await this.ui.aviso('Activa las notificaciones de MotoCheck en los ajustes del teléfono.', 'warning');
+      await this.ui.aviso(t('ajustes.permisoAvisos'), 'warning');
     }
     await this.storage.guardarPreferencias({ avisosActivos: activar });
-    await this.ui.aviso(activar ? 'Avisos activados.' : 'Avisos desactivados.');
+    await this.ui.aviso(t(activar ? 'ajustes.avisosActivados' : 'ajustes.avisosDesactivados'));
   }
 
   async cambiarRespaldoAutomatico(evento: CustomEvent<{ checked: boolean }>): Promise<void> {
     await this.storage.guardarPreferencias({ respaldoAutomatico: evento.detail.checked });
-    await this.ui.aviso('El respaldo automático estará disponible en la versión final.', 'warning');
+    await this.ui.aviso(t('ajustes.respaldoAutoPendiente'), 'warning');
   }
 
   async exportar(): Promise<void> {
     try {
       await this.respaldo.exportar();
-      await this.ui.aviso('Respaldo exportado.');
+      await this.ui.aviso(t('ajustes.exportado'));
     } catch {
-      await this.ui.aviso('No se exportó el respaldo.', 'warning');
+      await this.ui.aviso(t('ajustes.noExportado'), 'warning');
     }
   }
 
@@ -78,29 +95,20 @@ export class AjustesPage {
     input.value = '';
     if (!archivo) return;
 
-    const ok = await this.ui.confirmar(
-      'Importar respaldo',
-      'Los datos actuales se reemplazarán por los del archivo.',
-      'Importar',
-    );
+    const ok = await this.ui.confirmar(t('ajustes.importar'), t('ajustes.importarMensaje'), t('ajustes.importarBoton'));
     if (!ok) return;
 
     const valido = await this.respaldo.importar(archivo);
-    await this.ui.aviso(
-      valido ? 'Respaldo restaurado correctamente.' : 'El archivo no es un respaldo válido de MotoCheck.',
-      valido ? 'success' : 'danger',
-    );
+    if (valido) await this.idiomas.aplicarGuardado();
+    await this.ui.aviso(t(valido ? 'ajustes.restaurado' : 'ajustes.archivoInvalido'), valido ? 'success' : 'danger');
   }
 
   async borrarTodo(): Promise<void> {
-    const ok = await this.ui.confirmar(
-      'Borrar todos los datos',
-      'Se eliminarán la moto, la bitácora y los ajustes de este teléfono. Exporta un respaldo antes si lo necesitas.',
-      'Borrar todo',
-    );
+    const ok = await this.ui.confirmar(t('ajustes.borrarTodo'), t('ajustes.borrarMensaje'), t('ajustes.borrarBoton'));
     if (!ok) return;
     await this.storage.borrarTodosLosDatos();
-    await this.ui.aviso('Datos borrados.');
+    await this.idiomas.aplicarGuardado();
+    await this.ui.aviso(t('ajustes.borrados'));
     await this.router.navigateByUrl('/registro', { replaceUrl: true });
   }
 }

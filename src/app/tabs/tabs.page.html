@@ -1,18 +1,18 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" aria-label="Navegación principal">
+  <ion-tab-bar slot="bottom" [attr.aria-label]="'tabs.navegacion' | transloco">
     <ion-tab-button tab="inicio" href="/tabs/inicio">
       <ion-icon aria-hidden="true" name="home-outline"></ion-icon>
-      <ion-label>Inicio</ion-label>
+      <ion-label>{{ 'tabs.inicio' | transloco }}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="bitacora" href="/tabs/bitacora">
       <ion-icon aria-hidden="true" name="list-outline"></ion-icon>
-      <ion-label>Bitácora</ion-label>
+      <ion-label>{{ 'tabs.bitacora' | transloco }}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="checklist" href="/tabs/checklist">
       <ion-icon aria-hidden="true" name="clipboard-outline"></ion-icon>
-      <ion-label>Checklist</ion-label>
+      <ion-label>{{ 'tabs.checklist' | transloco }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

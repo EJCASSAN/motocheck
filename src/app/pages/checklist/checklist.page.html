@@ -2,27 +2,27 @@
   <div class="mc-page">
     <header class="mc-row-between">
       <div>
-        <h1 class="mc-title">Pre-ruta</h1>
-        <span class="mc-muted">Revisa {{ items.length }} puntos antes de salir</span>
+        <h1 class="mc-title">{{ 'checklist.titulo' | transloco }}</h1>
+        <span class="mc-muted">{{ 'checklist.subtitulo' | transloco: { n: items.length } }}</span>
       </div>
       <div class="acciones">
-        <button type="button" class="reiniciar" (click)="reiniciar()">Reiniciar</button>
-        <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+        <button type="button" class="reiniciar" (click)="reiniciar()">{{ 'checklist.reiniciar' | transloco }}</button>
+        <a class="mc-icon-btn" routerLink="/ajustes" [attr.aria-label]="'comun.ajustesYPerfil' | transloco">
           <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
         </a>
       </div>
     </header>
 
-    <section class="mc-card progreso" aria-label="Progreso">
+    <section class="mc-card progreso" [attr.aria-label]="'checklist.progreso' | transloco">
       <div class="mc-row-between">
-        <span class="texto">{{ revisados() }} de {{ items.length }} revisados</span>
+        <span class="texto">{{ 'checklist.revisados' | transloco: { n: revisados(), total: items.length } }}</span>
         <span class="mc-display pct">{{ porcentaje() }}%</span>
       </div>
       <div class="mc-bar"><div [style.width.%]="porcentaje()"></div></div>
     </section>
 
     <ul class="puntos">
-      @for (it of items; track it.id) {
+      @for (it of puntos(); track it.id) {
       <li class="mc-card punto" [class.falla]="resultados()[it.id] === 'no_aprobado'">
         <div class="mc-tile-icon"><ion-icon [name]="it.icono" aria-hidden="true"></ion-icon></div>
         <div class="info">
@@ -34,7 +34,7 @@
           class="marca fail"
           [class.on]="resultados()[it.id] === 'no_aprobado'"
           [attr.aria-pressed]="resultados()[it.id] === 'no_aprobado'"
-          [attr.aria-label]="it.nombre + ': no aprobado'"
+          [attr.aria-label]="'checklist.noAprobadoAria' | transloco: { nombre: it.nombre }"
           (click)="marcar(it.id, 'no_aprobado')"
         >
           <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
@@ -44,7 +44,7 @@
           class="marca ok"
           [class.on]="resultados()[it.id] === 'aprobado'"
           [attr.aria-pressed]="resultados()[it.id] === 'aprobado'"
-          [attr.aria-label]="it.nombre + ': aprobado'"
+          [attr.aria-label]="'checklist.aprobadoAria' | transloco: { nombre: it.nombre }"
           (click)="marcar(it.id, 'aprobado')"
         >
           <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
@@ -57,25 +57,25 @@
     <div class="estado mal" role="status">
       <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
       <div>
-        <strong>No es seguro rodar todavía</strong>
-        <span>Revisa: {{ nombresFallas() }}</span>
+        <strong>{{ 'checklist.noSeguro' | transloco }}</strong>
+        <span>{{ 'checklist.revisaLista' | transloco: { lista: nombresFallas() } }}</span>
       </div>
     </div>
     } @else if (pendientes() === 0) {
     <div class="estado bien" role="status">
       <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
       <div>
-        <strong>Lista para rodar</strong>
-        <span>Todos los puntos críticos fueron aprobados.</span>
+        <strong>{{ 'checklist.lista' | transloco }}</strong>
+        <span>{{ 'checklist.todosAprobados' | transloco }}</span>
       </div>
     </div>
     } @else {
     <div class="estado" role="status">
       <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
-      <span>Te {{ pendientes() === 1 ? 'falta 1 punto' : 'faltan ' + pendientes() + ' puntos' }} por revisar.</span>
+      <span>{{ faltan() }}</span>
     </div>
     }
 
-    <button type="button" class="mc-btn primary" (click)="finalizar()">Finalizar verificación</button>
+    <button type="button" class="mc-btn primary" (click)="finalizar()">{{ 'checklist.finalizar' | transloco }}</button>
   </div>
 </ion-content>

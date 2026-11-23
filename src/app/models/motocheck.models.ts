@@ -1,3 +1,5 @@
+import type { Idioma } from '../i18n/idioma';
+
 export type TipoServicioPeriodico = 'aceite' | 'cadena' | 'frenos' | 'filtros' | 'bujias' | 'kit_arrastre';
 
 export type TipoMantenimiento = TipoServicioPeriodico | 'otro';
@@ -34,11 +36,11 @@ export interface Preferencias {
   avisosActivos: boolean;
   respaldoAutomatico: boolean;
   ultimoRespaldo: string | null;
+  idioma?: Idioma;
 }
 
 export interface AlertaMantenimiento {
   tipo: TipoServicioPeriodico;
-  nombre: string;
   kmRecorridos: number;
   intervaloKm: number;
   kmRestantes: number;
@@ -52,10 +54,7 @@ export type ResultadoPunto = 'aprobado' | 'no_aprobado' | null;
 
 export interface ItemChecklist {
   id: PuntoChecklist;
-  nombre: string;
-  ayuda: string;
   icono: string;
-  recomendacion: string;
   servicioRelacionado: TipoMantenimiento;
 }
 

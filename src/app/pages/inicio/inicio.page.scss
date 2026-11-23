@@ -122,3 +122,8 @@
   font-size: 15px;
   font-weight: 600;
 }
+
+.odometro > .mc-row-between {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}

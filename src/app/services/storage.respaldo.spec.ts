@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
+import { configurarIdiomasDePrueba } from '../i18n/testing';
 import { INTERVALOS_DEFAULT } from '../models/catalogo';
 import type { PerfilMoto, RespaldoMotoCheck } from '../models/motocheck.models';
 
@@ -267,5 +268,46 @@ describe('Arranque con datos dañados (local-data)', () => {
     await storage.cargar();
     expect(storage.preferencias().avisosActivos).toBe(true);
     expect(storage.ultimaInspeccion()).toBeNull();
+  });
+});
+
+describe('Idioma en los datos guardados (local-data)', () => {
+  let storage: StorageService;
+
+  beforeEach(async () => {
+    localStorage.clear();
+    storage = TestBed.inject(StorageService);
+    await storage.guardarPerfil(perfilActual);
+  });
+
+  it('el respaldo conserva el idioma elegido', async () => {
+    await storage.guardarPreferencias({ idioma: 'en' });
+    const json = JSON.stringify(storage.crearRespaldo());
+    await storage.guardarPreferencias({ idioma: 'es' });
+    expect(await storage.restaurarRespaldo(json)).toBe(true);
+    expect(storage.preferencias().idioma).toBe('en');
+  });
+
+  it('un respaldo antiguo sin idioma se importa y deja el idioma sin elegir', async () => {
+    expect(await storage.restaurarRespaldo(respaldo({ preferencias: { avisosActivos: true } }))).toBe(true);
+    expect(storage.preferencias().idioma).toBeUndefined();
+  });
+
+  it('rechaza un respaldo con idioma desconocido', async () => {
+    expect(await storage.restaurarRespaldo(respaldo({ preferencias: { idioma: 'fr' } }))).toBe(false);
+    expect(storage.perfil()?.placa).toBe('ABC12D');
+  });
+
+  it('un idioma guardado dañado se ignora y se conservan las demás preferencias', async () => {
+    localStorage.setItem(
+      'CapacitorStorage.motocheck_preferencias',
+      JSON.stringify({ avisosActivos: false, idioma: 'xx' }),
+    );
+    TestBed.resetTestingModule();
+    configurarIdiomasDePrueba();
+    const recargado = TestBed.inject(StorageService);
+    await recargado.cargar();
+    expect(recargado.preferencias().avisosActivos).toBe(false);
+    expect(recargado.preferencias().idioma).toBeUndefined();
   });
 });

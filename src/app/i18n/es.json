@@ -1,0 +1,295 @@
+{
+  "comun": {
+    "cancelar": "Cancelar",
+    "volver": "Volver",
+    "editar": "Editar",
+    "ajustesYPerfil": "Ajustes y perfil",
+    "guardarCambios": "Guardar cambios"
+  },
+  "fechas": {
+    "sinFecha": "Sin fecha",
+    "hoy": "hoy",
+    "ayer": "ayer",
+    "haceDias": {
+      "uno": "hace 1 día",
+      "varios": "hace {{n}} días"
+    },
+    "haceMeses": {
+      "uno": "hace 1 mes",
+      "varios": "hace {{n}} meses"
+    },
+    "mesAnio": "{{mes}} {{anio}}",
+    "diaMes": "{{dia}} {{mes}}"
+  },
+  "estado": {
+    "vencido": "Vencido",
+    "proximo": "Próximo",
+    "optimo": "Al día"
+  },
+  "servicio": {
+    "aceite": {
+      "nombre": "Aceite de motor",
+      "corto": "Aceite"
+    },
+    "cadena": {
+      "nombre": "Tensión de cadena",
+      "corto": "Cadena"
+    },
+    "frenos": {
+      "nombre": "Pastillas de freno",
+      "corto": "Frenos"
+    },
+    "filtros": {
+      "nombre": "Filtro de aire",
+      "corto": "Filtros"
+    },
+    "bujias": {
+      "nombre": "Bujías",
+      "corto": "Bujías"
+    },
+    "kit_arrastre": {
+      "nombre": "Kit de arrastre",
+      "corto": "Kit arrastre"
+    },
+    "otro": {
+      "nombre": "Otro servicio",
+      "corto": "Otro"
+    }
+  },
+  "checklist": {
+    "puntos": {
+      "llantas": {
+        "nombre": "Neumáticos",
+        "ayuda": "Presión y desgaste",
+        "recomendacion": "Calibra la presión según el manual y cambia la llanta si el labrado está por debajo del testigo."
+      },
+      "aceite": {
+        "nombre": "Nivel de aceite",
+        "ayuda": "Entre mín. y máx.",
+        "recomendacion": "Completa el nivel con el aceite recomendado y revisa que no haya fugas antes de salir."
+      },
+      "cadena": {
+        "nombre": "Tensión de cadena",
+        "ayuda": "Holgura 2–3 cm",
+        "recomendacion": "Ajusta y lubrica la cadena dejando entre 2 y 3 cm de juego libre."
+      },
+      "frenos": {
+        "nombre": "Líquido de frenos",
+        "ayuda": "Nivel y color",
+        "recomendacion": "No ruedes hasta revisar el nivel del líquido y el grosor de las pastillas."
+      },
+      "luces": {
+        "nombre": "Luces",
+        "ayuda": "Altas, bajas, stop, direccionales",
+        "recomendacion": "Cambia el bombillo o fusible dañado: rodar sin luces es peligroso y genera multa."
+      }
+    },
+    "titulo": "Pre-ruta",
+    "subtitulo": "Revisa {{n}} puntos antes de salir",
+    "reiniciar": "Reiniciar",
+    "progreso": "Progreso",
+    "revisados": "{{n}} de {{total}} revisados",
+    "aprobadoAria": "{{nombre}}: aprobado",
+    "noAprobadoAria": "{{nombre}}: no aprobado",
+    "noSeguro": "No es seguro rodar todavía",
+    "revisaLista": "Revisa: {{lista}}",
+    "lista": "Lista para rodar",
+    "todosAprobados": "Todos los puntos críticos fueron aprobados.",
+    "faltan": {
+      "uno": "Te falta 1 punto por revisar.",
+      "varios": "Te faltan {{n}} puntos por revisar."
+    },
+    "pendientesAviso": {
+      "uno": "Revisa el punto pendiente antes de finalizar.",
+      "varios": "Revisa los {{n}} puntos pendientes antes de finalizar."
+    },
+    "finalizar": "Finalizar verificación"
+  },
+  "avisos": {
+    "tituloVencido": "{{nombre}}: vencido",
+    "tituloProximo": "{{nombre}}: se acerca",
+    "cuerpoPasado": "Te pasaste {{km}} km del intervalo.",
+    "cuerpoFaltan": "Faltan {{km}} km para el próximo servicio."
+  },
+  "ajustes": {
+    "titulo": "Ajustes",
+    "motoResumen": "{{cc}} cc · {{placa}} · desde {{km}} km",
+    "idioma": "Idioma",
+    "nombreIdioma": {
+      "es": "Español",
+      "en": "English"
+    },
+    "idiomaCambiado": "Idioma cambiado.",
+    "mantenimiento": "Mantenimiento",
+    "avisos": "Avisos de mantenimiento",
+    "datos": "Datos y respaldo",
+    "exportar": "Exportar respaldo (.json)",
+    "ultimo": "Último: {{fecha}}",
+    "nunca": "nunca",
+    "importar": "Importar respaldo",
+    "importarMensaje": "Los datos actuales se reemplazarán por los del archivo.",
+    "importarBoton": "Importar",
+    "respaldoAuto": "Respaldo automático semanal",
+    "proximamente": "Próximamente",
+    "espacio": "Todo se guarda en este teléfono · {{kb}} KB usados",
+    "borrarTodo": "Borrar todos los datos",
+    "borrarMensaje": "Se eliminarán la moto, la bitácora y los ajustes de este teléfono. Exporta un respaldo antes si lo necesitas.",
+    "borrarBoton": "Borrar todo",
+    "borrados": "Datos borrados.",
+    "version": "MotoCheck 1.0 · Funciona 100% sin conexión",
+    "permisoAvisos": "Activa las notificaciones de MotoCheck en los ajustes del teléfono.",
+    "avisosActivados": "Avisos activados.",
+    "avisosDesactivados": "Avisos desactivados.",
+    "respaldoAutoPendiente": "El respaldo automático estará disponible en la versión final.",
+    "exportado": "Respaldo exportado.",
+    "noExportado": "No se exportó el respaldo.",
+    "restaurado": "Respaldo restaurado correctamente.",
+    "archivoInvalido": "El archivo no es un respaldo válido de MotoCheck.",
+    "compartirTitulo": "Respaldo MotoCheck",
+    "idiomaError": "No se pudo cambiar el idioma."
+  },
+  "registro": {
+    "tituloBienvenida": "Bienvenido a MotoCheck",
+    "tituloEditar": "Editar mi moto",
+    "introRegistro": "Registra tu moto una sola vez y te avisamos cuándo toca cada mantenimiento.",
+    "introEditar": "Corrige los datos de tu moto. El kilometraje se cambia desde Inicio.",
+    "marca": "Marca",
+    "marcaEjemplo": "Ej. Yamaha",
+    "modelo": "Línea / modelo",
+    "modeloEjemplo": "Ej. MT-03",
+    "cilindraje": "Cilindraje",
+    "placa": "Placa",
+    "kmActual": "Kilometraje actual del odómetro",
+    "kmAyuda": "Será la base para calcular tus alertas de servicio.",
+    "privacidad": "Tus datos se guardan solo en este teléfono. Funciona sin internet, incluso en carretera.",
+    "comenzar": "Comenzar a monitorear",
+    "revisaCampos": "Revisa los campos marcados en rojo.",
+    "motoActualizada": "Datos de la moto actualizados.",
+    "errores": {
+      "marcaVacia": "Escribe la marca.",
+      "modeloVacio": "Escribe la línea o modelo.",
+      "maximo50": "Máximo 50 caracteres.",
+      "cilindrajeVacio": "Escribe el cilindraje.",
+      "cilindrajeRango": "Entre 50 y 2.500 cc.",
+      "placaVacia": "Escribe la placa.",
+      "placaFormato": "Formato: ABC12D o ABC12.",
+      "kmVacio": "Escribe el kilometraje.",
+      "kmNegativo": "No puede ser negativo."
+    }
+  },
+  "inicio": {
+    "miMoto": "Mi moto",
+    "odometro": "Odómetro",
+    "odometroActual": "Odómetro actual",
+    "actualizado": "Actualizado {{cuando}}",
+    "odometroAria": "Odómetro: {{km}} km. Tocar para actualizar",
+    "actualizarKm": "Actualizar kilometraje",
+    "resumen": "Resumen de estados",
+    "mantenimientos": "Mantenimientos",
+    "tocaUno": "Toca uno para registrarlo",
+    "kmDeIntervalo": "{{recorridos}} km de {{intervalo}} km",
+    "faltanKm": "Faltan {{km}} km"
+  },
+  "km": {
+    "nuevoValor": "Nuevo valor del odómetro",
+    "escribeValor": "Escribe el valor del odómetro",
+    "diferencia": "+{{km}} km desde la última vez",
+    "menorQue": "No puede ser menor que {{km}} km",
+    "anterior": "Anterior: {{km}} km",
+    "teclado": "Teclado numérico",
+    "guardar": "Guardar kilometraje",
+    "borrarDigito": "Borrar un dígito",
+    "borrarTodo": "Borrar todo",
+    "errorGuardar": "No se pudo guardar el kilometraje.",
+    "actualizado": "Kilometraje actualizado."
+  },
+  "servicioForm": {
+    "tituloNuevo": "Nuevo servicio",
+    "tituloEditar": "Editar servicio",
+    "pregunta": "¿Qué le hiciste a la moto?",
+    "kilometraje": "Kilometraje",
+    "fecha": "Fecha",
+    "costo": "Costo",
+    "notas": "Insumos y notas",
+    "opcional": "(opcional)",
+    "notasEjemplo": "Ej. Aceite 10W-40 sintético, filtro nuevo, taller El Pistón",
+    "guardar": "Guardar en bitácora",
+    "guardado": "Servicio guardado en la bitácora.",
+    "actualizado": "Servicio actualizado.",
+    "errores": {
+      "kmVacio": "Escribe el kilometraje del servicio.",
+      "kmNegativo": "El kilometraje no puede ser negativo.",
+      "fechaVacia": "Elige la fecha.",
+      "fechaFutura": "La fecha no puede ser futura.",
+      "costoNegativo": "El costo no puede ser negativo."
+    }
+  },
+  "tabs": {
+    "inicio": "Inicio",
+    "bitacora": "Bitácora",
+    "checklist": "Checklist",
+    "navegacion": "Navegación principal"
+  },
+  "bitacora": {
+    "subtitulo": "Historial de servicios de tu {{modelo}}",
+    "buscar": "Buscar servicio",
+    "buscarEjemplo": "Buscar servicio o taller",
+    "filtrar": "Filtrar por categoría",
+    "todos": "Todos",
+    "totalInvertido": "Total invertido",
+    "invertido": {
+      "uno": "Invertido · 1 servicio",
+      "varios": "Invertido · {{n}} servicios"
+    },
+    "sinCoincidencias": "No hay servicios que coincidan con la búsqueda.",
+    "vacio": "Aún no hay servicios registrados.",
+    "vacioAyuda": "Toca el botón + para agregar el primero.",
+    "nuevo": "Registrar nuevo servicio"
+  },
+  "detalle": {
+    "datos": "Datos del servicio",
+    "costoTotal": "Costo total",
+    "proximoCambio": "Próximo cambio",
+    "intervalo": "Intervalo",
+    "cada": "Cada {{km}} km",
+    "sinNotas": "Sin observaciones adicionales.",
+    "eliminarTitulo": "Eliminar registro",
+    "eliminarMensaje": "Se borrará \"{{nombre}}\" del {{fecha}}. Esta acción no se puede deshacer.",
+    "eliminar": "Eliminar",
+    "eliminado": "Registro eliminado.",
+    "noExiste": "Este servicio ya no existe."
+  },
+  "diagnostico": {
+    "noApta": "No apta para rodar",
+    "apta": "Apta para rodar",
+    "sinAprobar": {
+      "uno": "1 punto crítico sin aprobar",
+      "varios": "{{n}} puntos críticos sin aprobar"
+    },
+    "todosAprobados": "Todos los puntos aprobados",
+    "cuando": "{{dia}}, {{hora}}",
+    "totales": "Totales",
+    "aprobados": "Aprobados",
+    "noAprobado": "No aprobado",
+    "revisados": "Revisados",
+    "resultadoPorPunto": "Resultado por punto",
+    "aprobado": "Aprobado",
+    "sinRevisar": "Sin revisar",
+    "queHacer": "Qué hacer · {{punto}}",
+    "ultimoServicio": "Último servicio de {{servicio}}: {{km}} km.",
+    "registrar": "Registrar {{servicio}}",
+    "volverInicio": "Volver al inicio",
+    "sinInspeccion": "Aún no has hecho una verificación pre-ruta."
+  },
+  "intervalos": {
+    "titulo": "Intervalos de servicio",
+    "porDefecto": "Valores por defecto",
+    "intro": "Cada cuántos kilómetros toca cada mantenimiento. Revisa el manual de tu moto.",
+    "avisarme": "Avisarme en amarillo al llegar al…",
+    "cada": "cada",
+    "reducir": "Reducir {{nombre}}",
+    "aumentar": "Aumentar {{nombre}}",
+    "guardar": "Guardar intervalos",
+    "guardados": "Intervalos guardados. Las alertas se recalcularon."
+  }
+}

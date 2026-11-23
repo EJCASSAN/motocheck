@@ -1,26 +1,28 @@
 <ion-content>
   <div class="mc-page">
-    <nav class="mc-row-between" aria-label="Volver">
+    <nav class="mc-row-between" [attr.aria-label]="'comun.volver' | transloco">
       <button type="button" class="mc-back" (click)="volver()">
         <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-        Ajustes
+        {{ 'ajustes.titulo' | transloco }}
       </button>
-      <button type="button" class="mc-back restaurar" (click)="restaurar()">Valores por defecto</button>
+      <button type="button" class="mc-back restaurar" (click)="restaurar()">
+        {{ 'intervalos.porDefecto' | transloco }}
+      </button>
     </nav>
 
     <header>
-      <h1 class="mc-title">Intervalos de servicio</h1>
-      <p class="mc-muted">Cada cuántos kilómetros toca cada mantenimiento. Revisa el manual de tu moto.</p>
+      <h1 class="mc-title">{{ 'intervalos.titulo' | transloco }}</h1>
+      <p class="mc-muted">{{ 'intervalos.intro' | transloco }}</p>
     </header>
 
     <section class="aviso">
-      <span id="lbl-aviso" class="etiqueta">Avisarme en amarillo al llegar al…</span>
-      <div class="segmentos" role="radiogroup" aria-labelledby="lbl-aviso">
+      <span id="lbl-aviso" class="etiqueta">{{ 'intervalos.avisarme' | transloco }}</span>
+      <div class="mc-segmentos" role="radiogroup" aria-labelledby="lbl-aviso">
         @for (u of umbrales; track u) {
         <button
           type="button"
           role="radio"
-          class="segmento"
+          class="mc-segmento"
           [class.on]="config.umbralAmarillo === u"
           [attr.aria-checked]="config.umbralAmarillo === u"
           (click)="config.umbralAmarillo = u"
@@ -35,26 +37,31 @@
       @for (t of tipos; track t) {
       <li>
         <div class="nombre">
-          <span>{{ nombres[t] }}</span>
-          <small class="mc-muted">cada</small>
+          <span>{{ nombreServicio(t) }}</span>
+          <small class="mc-muted">{{ 'intervalos.cada' | transloco }}</small>
         </div>
         <button
           type="button"
           class="paso"
-          [attr.aria-label]="'Reducir ' + nombres[t]"
+          [attr.aria-label]="'intervalos.reducir' | transloco: { nombre: nombreServicio(t) }"
           [disabled]="config.intervalosKm[t] <= minimo"
           (click)="cambiar(t, -1)"
         >
           −
         </button>
         <span class="valor mc-display">{{ miles(config.intervalosKm[t]) }} km</span>
-        <button type="button" class="paso" [attr.aria-label]="'Aumentar ' + nombres[t]" (click)="cambiar(t, 1)">
+        <button
+          type="button"
+          class="paso"
+          [attr.aria-label]="'intervalos.aumentar' | transloco: { nombre: nombreServicio(t) }"
+          (click)="cambiar(t, 1)"
+        >
           +
         </button>
       </li>
       }
     </ul>
 
-    <button type="button" class="mc-btn primary" (click)="guardar()">Guardar intervalos</button>
+    <button type="button" class="mc-btn primary" (click)="guardar()">{{ 'intervalos.guardar' | transloco }}</button>
   </div>
 </ion-content>

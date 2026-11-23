@@ -1,17 +1,19 @@
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon, NavController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { ICONOS_SERVICIO, NOMBRES_SERVICIO } from '../../models/catalogo';
+import { t } from '../../i18n/idioma';
+import { ICONOS_SERVICIO, nombreServicio } from '../../models/catalogo';
 import { ModalesService } from '../../services/modales.service';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
-import { fechaLocal, miles } from '../../utils/formato';
+import { fechaLarga, miles } from '../../utils/formato';
 
 @Component({
   selector: 'app-detalle-servicio',
   templateUrl: './detalle-servicio.page.html',
   styleUrls: ['./detalle-servicio.page.scss'],
-  imports: [IonContent, IonIcon],
+  imports: [IonContent, IonIcon, TranslocoPipe],
 })
 export class DetalleServicioPage {
   private storage = inject(StorageService);
@@ -25,7 +27,7 @@ export class DetalleServicioPage {
     this.id.set(valor);
   }
 
-  readonly nombres = NOMBRES_SERVICIO;
+  readonly nombreServicio = nombreServicio;
   readonly iconos = ICONOS_SERVICIO;
   readonly miles = miles;
 
@@ -33,14 +35,7 @@ export class DetalleServicioPage {
 
   readonly fechaLarga = computed(() => {
     const r = this.registro();
-    if (!r) return '';
-    const texto = fechaLocal(r.fecha).toLocaleDateString('es-CO', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-    return texto[0].toUpperCase() + texto.slice(1);
+    return r ? fechaLarga(r.fecha) : '';
   });
 
   readonly intervalo = computed(() => {
@@ -61,13 +56,13 @@ export class DetalleServicioPage {
     const r = this.registro();
     if (!r) return;
     const ok = await this.ui.confirmar(
-      'Eliminar registro',
-      `Se borrará "${NOMBRES_SERVICIO[r.tipo]}" del ${r.fecha}. Esta acción no se puede deshacer.`,
-      'Eliminar',
+      t('detalle.eliminarTitulo'),
+      t('detalle.eliminarMensaje', { nombre: nombreServicio(r.tipo), fecha: r.fecha }),
+      t('detalle.eliminar'),
     );
     if (!ok) return;
     await this.storage.eliminarMantenimiento(r.id);
-    await this.ui.aviso('Registro eliminado.');
+    await this.ui.aviso(t('detalle.eliminado'));
     this.nav.navigateBack('/tabs/bitacora');
   }
 }

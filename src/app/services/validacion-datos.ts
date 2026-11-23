@@ -1,3 +1,4 @@
+import { esIdioma, idiomaOpcional } from '../i18n/idioma';
 import { INTERVALOS_DEFAULT, PREFERENCIAS_DEFAULT, TIPOS_PERIODICOS } from '../models/catalogo';
 import type {
   ConfiguracionIntervalos,
@@ -114,7 +115,8 @@ export function normalizarIntervalos(valor: unknown): ConfiguracionIntervalos | 
 export function normalizarPreferencias(valor: unknown): Preferencias | null {
   if (valor === undefined || valor === null) return { ...PREFERENCIAS_DEFAULT };
   if (!esObjeto(valor)) return null;
-  const { avisosActivos, respaldoAutomatico, ultimoRespaldo } = valor;
+  const { avisosActivos, respaldoAutomatico, ultimoRespaldo, idioma } = valor;
+  if (idioma !== undefined && !esIdioma(idioma)) return null;
   if (avisosActivos !== undefined && typeof avisosActivos !== 'boolean') return null;
   if (respaldoAutomatico !== undefined && typeof respaldoAutomatico !== 'boolean') return null;
   if (ultimoRespaldo !== undefined && ultimoRespaldo !== null && !esFechaHoraISO(ultimoRespaldo)) return null;
@@ -122,6 +124,7 @@ export function normalizarPreferencias(valor: unknown): Preferencias | null {
     avisosActivos: avisosActivos ?? PREFERENCIAS_DEFAULT.avisosActivos,
     respaldoAutomatico: respaldoAutomatico ?? PREFERENCIAS_DEFAULT.respaldoAutomatico,
     ultimoRespaldo: (ultimoRespaldo as string | null | undefined) ?? null,
+    ...idiomaOpcional(idioma),
   };
 }
 

@@ -1,8 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { ETIQUETAS_CORTAS, ICONOS_SERVICIO, NOMBRES_SERVICIO } from '../../models/catalogo';
+import { t, tPlural } from '../../i18n/idioma';
+import { ICONOS_SERVICIO, TIPOS_SERVICIO, etiquetaCorta, nombreServicio } from '../../models/catalogo';
 import type { RegistroMantenimiento, TipoMantenimiento } from '../../models/motocheck.models';
 import { ModalesService } from '../../services/modales.service';
 import { StorageService } from '../../services/storage.service';
@@ -26,13 +28,13 @@ function normalizar(texto: string): string {
   selector: 'app-bitacora',
   templateUrl: './bitacora.page.html',
   styleUrls: ['./bitacora.page.scss'],
-  imports: [IonContent, IonFab, IonFabButton, IonIcon, RouterLink],
+  imports: [IonContent, IonFab, IonFabButton, IonIcon, RouterLink, TranslocoPipe],
 })
 export class BitacoraPage {
   private storage = inject(StorageService);
   private modales = inject(ModalesService);
 
-  readonly nombres = NOMBRES_SERVICIO;
+  readonly nombreServicio = nombreServicio;
   readonly iconos = ICONOS_SERVICIO;
   readonly miles = miles;
   readonly diaMes = diaMesCorto;
@@ -43,10 +45,10 @@ export class BitacoraPage {
 
   readonly chips = computed(() => {
     const usados = new Set(this.storage.mantenimientos().map((m) => m.tipo));
-    const tipos = (Object.keys(ETIQUETAS_CORTAS) as TipoMantenimiento[]).filter((t) => usados.has(t));
+    const tipos = TIPOS_SERVICIO.filter((tipo) => usados.has(tipo));
     return [
-      { id: 'todos' as Filtro, label: 'Todos' },
-      ...tipos.map((t) => ({ id: t as Filtro, label: ETIQUETAS_CORTAS[t] })),
+      { id: 'todos' as Filtro, label: t('bitacora.todos') },
+      ...tipos.map((tipo) => ({ id: tipo as Filtro, label: etiquetaCorta(tipo) })),
     ];
   });
 
@@ -58,7 +60,7 @@ export class BitacoraPage {
       .filter(
         (m) =>
           (f === 'todos' || m.tipo === f) &&
-          (!q || normalizar(`${NOMBRES_SERVICIO[m.tipo]} ${m.insumosNotas}`).includes(q)),
+          (!q || normalizar(`${nombreServicio(m.tipo)} ${m.insumosNotas}`).includes(q)),
       );
   });
 
@@ -73,6 +75,7 @@ export class BitacoraPage {
     return grupos;
   });
 
+  readonly resumen = computed(() => tPlural(this.filtrados().length, 'bitacora.invertido'));
   readonly total = computed(() => this.filtrados().reduce((s, m) => s + (m.costo || 0), 0));
   readonly hayRegistros = computed(() => this.storage.mantenimientos().length > 0);
 

@@ -295,6 +295,34 @@ textarea.mc-input {
   gap: 12px;
 }
 
+.mc-segmentos {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+}
+
+.mc-segmento {
+  height: 44px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--mc-muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &.on {
+    background: var(--mc-primary);
+    color: var(--mc-on-primary);
+  }
+}
+
 .mc-chips {
   display: flex;
   gap: 8px;

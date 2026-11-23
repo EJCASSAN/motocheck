@@ -1,9 +1,21 @@
 import { Injectable, effect, inject } from '@angular/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
+import { t } from '../i18n/idioma';
+import { nombreServicio } from '../models/catalogo';
 import type { AlertaMantenimiento, EstadoAlerta, TipoServicioPeriodico } from '../models/motocheck.models';
+import { miles } from '../utils/formato';
 
 import { StorageService } from './storage.service';
+
+export function textoAviso(a: AlertaMantenimiento): { title: string; body: string } {
+  const nombre = nombreServicio(a.tipo);
+  const km = miles(Math.abs(a.kmRestantes));
+  return {
+    title: t(a.estado === 'vencido' ? 'avisos.tituloVencido' : 'avisos.tituloProximo', { nombre }),
+    body: t(a.kmRestantes < 0 ? 'avisos.cuerpoPasado' : 'avisos.cuerpoFaltan', { km }),
+  };
+}
 
 const GRAVEDAD: Record<EstadoAlerta, number> = { optimo: 0, proximo: 1, vencido: 2 };
 
@@ -47,11 +59,7 @@ export class AvisosService {
       await LocalNotifications.schedule({
         notifications: alertas.map((a, i) => ({
           id: (Math.floor(Date.now() / 1000) % 100000) + i,
-          title: a.estado === 'vencido' ? `${a.nombre}: vencido` : `${a.nombre}: se acerca`,
-          body:
-            a.kmRestantes < 0
-              ? `Te pasaste ${Math.abs(a.kmRestantes).toLocaleString('es-CO')} km del intervalo.`
-              : `Faltan ${a.kmRestantes.toLocaleString('es-CO')} km para el próximo servicio.`,
+          ...textoAviso(a),
         })),
       });
     } catch {

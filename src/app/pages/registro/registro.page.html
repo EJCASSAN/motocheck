@@ -3,7 +3,7 @@
     @if (editando) {
     <button type="button" class="mc-back" (click)="volver()">
       <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-      Ajustes
+      {{ 'ajustes.titulo' | transloco }}
     </button>
     }
 
@@ -13,22 +13,19 @@
         <ion-icon name="speedometer-outline"></ion-icon>
       </div>
       }
-      <h1 class="mc-title">{{ editando ? 'Editar mi moto' : 'Bienvenido a MotoCheck' }}</h1>
-      <p class="lead">
-        @if (editando) { Corrige los datos de tu moto. El kilometraje se cambia desde Inicio. } @else { Registra tu moto
-        una sola vez y te avisamos cuándo toca cada mantenimiento. }
-      </p>
+      <h1 class="mc-title">{{ (editando ? 'registro.tituloEditar' : 'registro.tituloBienvenida') | transloco }}</h1>
+      <p class="lead">{{ (editando ? 'registro.introEditar' : 'registro.introRegistro') | transloco }}</p>
     </header>
 
     <div class="mc-grid-2">
       <div class="mc-field">
-        <label for="marca">Marca</label>
+        <label for="marca">{{ 'registro.marca' | transloco }}</label>
         <input
           id="marca"
           name="marca"
           maxlength="50"
           class="mc-input"
-          placeholder="Ej. Yamaha"
+          [placeholder]="'registro.marcaEjemplo' | transloco"
           autocomplete="off"
           [class.invalid]="error('marca')"
           [(ngModel)]="marca"
@@ -36,13 +33,13 @@
         @if (error('marca')) { <span class="mc-error">{{ error('marca') }}</span> }
       </div>
       <div class="mc-field">
-        <label for="modelo">Línea / modelo</label>
+        <label for="modelo">{{ 'registro.modelo' | transloco }}</label>
         <input
           id="modelo"
           name="modelo"
           maxlength="50"
           class="mc-input"
-          placeholder="Ej. MT-03"
+          [placeholder]="'registro.modeloEjemplo' | transloco"
           autocomplete="off"
           [class.invalid]="error('modelo')"
           [(ngModel)]="modelo"
@@ -53,7 +50,7 @@
 
     <div class="mc-grid-2">
       <div class="mc-field">
-        <label for="cc">Cilindraje</label>
+        <label for="cc">{{ 'registro.cilindraje' | transloco }}</label>
         <div class="mc-input-wrap has-suffix">
           <input
             id="cc"
@@ -70,7 +67,7 @@
         @if (error('cilindraje')) { <span class="mc-error">{{ error('cilindraje') }}</span> }
       </div>
       <div class="mc-field">
-        <label for="placa">Placa</label>
+        <label for="placa">{{ 'registro.placa' | transloco }}</label>
         <input
           id="placa"
           name="placa"
@@ -87,7 +84,7 @@
 
     @if (!editando) {
     <div class="mc-field">
-      <label for="odo">Kilometraje actual del odómetro</label>
+      <label for="odo">{{ 'registro.kmActual' | transloco }}</label>
       <div class="mc-input-wrap has-suffix">
         <input
           id="odo"
@@ -104,18 +101,18 @@
       @if (error('kilometraje')) {
       <span class="mc-error">{{ error('kilometraje') }}</span>
       } @else {
-      <span class="mc-hint">Será la base para calcular tus alertas de servicio.</span>
+      <span class="mc-hint">{{ 'registro.kmAyuda' | transloco }}</span>
       }
     </div>
 
     <div class="privacidad">
       <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
-      <p>Tus datos se guardan solo en este teléfono. Funciona sin internet, incluso en carretera.</p>
+      <p>{{ 'registro.privacidad' | transloco }}</p>
     </div>
     }
 
     <button type="submit" class="mc-btn primary enviar">
-      {{ editando ? 'Guardar cambios' : 'Comenzar a monitorear' }}
+      {{ (editando ? 'comun.guardarCambios' : 'registro.comenzar') | transloco }}
       <ion-icon [name]="editando ? 'checkmark-outline' : 'arrow-forward-outline'" aria-hidden="true"></ion-icon>
     </button>
   </form>

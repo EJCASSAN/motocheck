@@ -2,10 +2,10 @@
   <div class="mc-page">
     <header class="mc-row-between">
       <div>
-        <h1 class="mc-title">Bitácora</h1>
-        <span class="mc-muted">Historial de servicios de tu {{ perfil()?.modelo }}</span>
+        <h1 class="mc-title">{{ 'tabs.bitacora' | transloco }}</h1>
+        <span class="mc-muted">{{ 'bitacora.subtitulo' | transloco: { modelo: perfil()?.modelo } }}</span>
       </div>
-      <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+      <a class="mc-icon-btn" routerLink="/ajustes" [attr.aria-label]="'comun.ajustesYPerfil' | transloco">
         <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
       </a>
     </header>
@@ -13,18 +13,18 @@
     @if (hayRegistros()) {
     <div class="mc-input-wrap buscar">
       <ion-icon name="search-outline" class="mc-prefix" aria-hidden="true"></ion-icon>
-      <label for="buscar" class="sr-only">Buscar servicio</label>
+      <label for="buscar" class="sr-only">{{ 'bitacora.buscar' | transloco }}</label>
       <input
         id="buscar"
         class="mc-input"
         type="search"
-        placeholder="Buscar servicio o taller"
+        [placeholder]="'bitacora.buscarEjemplo' | transloco"
         [value]="busqueda()"
         (input)="buscar($event)"
       />
     </div>
 
-    <div class="mc-chips" role="group" aria-label="Filtrar por categoría">
+    <div class="mc-chips" role="group" [attr.aria-label]="'bitacora.filtrar' | transloco">
       @for (c of chips(); track c.id) {
       <button
         type="button"
@@ -38,10 +38,8 @@
       }
     </div>
 
-    <section class="mc-card total" aria-label="Total invertido">
-      <span class="mc-muted"
-        >Invertido · {{ filtrados().length }} {{ filtrados().length === 1 ? 'servicio' : 'servicios' }}</span
-      >
+    <section class="mc-card total" [attr.aria-label]="'bitacora.totalInvertido' | transloco">
+      <span class="mc-muted">{{ resumen() }}</span>
       <span class="mc-display">${{ miles(total()) }} <small>COP</small></span>
     </section>
 
@@ -52,7 +50,7 @@
       <a class="mc-card registro" [routerLink]="['/servicio', m.id]">
         <div class="mc-tile-icon"><ion-icon [name]="iconos[m.tipo]" aria-hidden="true"></ion-icon></div>
         <div class="texto">
-          <span class="titulo">{{ nombres[m.tipo] }}</span>
+          <span class="titulo">{{ nombreServicio(m.tipo) }}</span>
           <span class="mc-muted">{{ diaMes(m.fecha) }} · {{ miles(m.kilometraje) }} km</span>
         </div>
         <span class="costo mc-display">${{ miles(m.costo) }}</span>
@@ -63,18 +61,18 @@
     } @empty {
     <div class="mc-empty">
       <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-      <p>No hay servicios que coincidan con la búsqueda.</p>
+      <p>{{ 'bitacora.sinCoincidencias' | transloco }}</p>
     </div>
     } } @else {
     <div class="mc-empty">
       <ion-icon name="construct-outline" aria-hidden="true"></ion-icon>
-      <p>Aún no hay servicios registrados.<br />Toca el botón + para agregar el primero.</p>
+      <p>{{ 'bitacora.vacio' | transloco }}<br />{{ 'bitacora.vacioAyuda' | transloco }}</p>
     </div>
     }
   </div>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button aria-label="Registrar nuevo servicio" (click)="nuevo()">
+    <ion-fab-button [attr.aria-label]="'bitacora.nuevo' | transloco" (click)="nuevo()">
       <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>

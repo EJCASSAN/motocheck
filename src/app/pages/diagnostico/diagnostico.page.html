@@ -1,9 +1,9 @@
 <ion-content>
   <div class="mc-page">
-    <nav aria-label="Volver">
+    <nav [attr.aria-label]="'comun.volver' | transloco">
       <button type="button" class="mc-back" (click)="volver()">
         <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-        Checklist
+        {{ 'tabs.checklist' | transloco }}
       </button>
     </nav>
 
@@ -15,29 +15,34 @@
           aria-hidden="true"
         ></ion-icon>
       </div>
-      <h1 class="mc-title">{{ fallas().length > 0 ? 'No apta para rodar' : 'Apta para rodar' }}</h1>
-      <span class="mc-muted">
-        @if (fallas().length > 0) { {{ fallas().length }} {{ fallas().length === 1 ? 'punto crítico sin aprobar' :
-        'puntos críticos sin aprobar' }} } @else { Todos los puntos aprobados } · {{ cuando() }}
-      </span>
+      <h1 class="mc-title">{{ (fallas().length > 0 ? 'diagnostico.noApta' : 'diagnostico.apta') | transloco }}</h1>
+      <span class="mc-muted"> {{ resumen() }} · {{ cuando() }} </span>
     </header>
 
-    <section class="totales" aria-label="Totales">
-      <div class="mc-card"><span class="mc-display ok">{{ aprobados() }}</span><span>Aprobados</span></div>
-      <div class="mc-card"><span class="mc-display fail">{{ fallas().length }}</span><span>No aprobado</span></div>
-      <div class="mc-card"><span class="mc-display">{{ revisados() }}</span><span>Revisados</span></div>
+    <section class="totales" [attr.aria-label]="'diagnostico.totales' | transloco">
+      <div class="mc-card">
+        <span class="mc-display ok">{{ aprobados() }}</span><span>{{ 'diagnostico.aprobados' | transloco }}</span>
+      </div>
+      <div class="mc-card">
+        <span class="mc-display fail">{{ fallas().length }}</span
+        ><span>{{ 'diagnostico.noAprobado' | transloco }}</span>
+      </div>
+      <div class="mc-card">
+        <span class="mc-display">{{ revisados() }}</span><span>{{ 'diagnostico.revisados' | transloco }}</span>
+      </div>
     </section>
 
-    <ul class="mc-card puntos" aria-label="Resultado por punto">
+    <ul class="mc-card puntos" [attr.aria-label]="'diagnostico.resultadoPorPunto' | transloco">
       @for (p of puntos(); track p.item.id) {
       <li>
-        <span>{{ p.item.nombre }}</span>
+        <span>{{ p.nombre }}</span>
         <span
           class="mc-badge"
           [class.estado-optimo]="p.resultado === 'aprobado'"
           [class.estado-vencido]="p.resultado === 'no_aprobado'"
         >
-          {{ p.resultado === 'aprobado' ? 'Aprobado' : p.resultado === 'no_aprobado' ? 'No aprobado' : 'Sin revisar' }}
+          {{ (p.resultado === 'aprobado' ? 'diagnostico.aprobado' : p.resultado === 'no_aprobado' ?
+          'diagnostico.noAprobado' : 'diagnostico.sinRevisar') | transloco }}
         </span>
       </li>
       }
@@ -47,9 +52,9 @@
     <section class="mc-card que-hacer">
       <div class="titulo">
         <ion-icon name="build-outline" aria-hidden="true"></ion-icon>
-        Qué hacer · {{ f.item.nombre }}
+        {{ 'diagnostico.queHacer' | transloco: { punto: f.nombre } }}
       </div>
-      <p>{{ f.item.recomendacion }} {{ f.ultimoServicio }}</p>
+      <p>{{ textoPunto(f.item.id, 'recomendacion') }} {{ f.ultimoServicio }}</p>
       <button
         type="button"
         class="mc-btn"
@@ -57,16 +62,19 @@
         [class.secondary]="!primero"
         (click)="registrarArreglo(f)"
       >
-        Registrar {{ nombresServicio[f.item.servicioRelacionado].toLowerCase() }}
+        {{ 'diagnostico.registrar' | transloco: { servicio: nombreServicio(f.item.servicioRelacionado).toLowerCase() }
+        }}
       </button>
     </section>
     }
 
-    <button type="button" class="mc-btn secondary" (click)="irAInicio()">Volver al inicio</button>
+    <button type="button" class="mc-btn secondary" (click)="irAInicio()">
+      {{ 'diagnostico.volverInicio' | transloco }}
+    </button>
     } @else {
     <div class="mc-empty">
       <ion-icon name="clipboard-outline" aria-hidden="true"></ion-icon>
-      <p>Aún no has hecho una verificación pre-ruta.</p>
+      <p>{{ 'diagnostico.sinInspeccion' | transloco }}</p>
     </div>
     }
   </div>

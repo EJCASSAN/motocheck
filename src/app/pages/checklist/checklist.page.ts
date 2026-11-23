@@ -1,8 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { CHECKLIST } from '../../models/catalogo';
+import { tPlural } from '../../i18n/idioma';
+import { CHECKLIST, textoPunto } from '../../models/catalogo';
 import type { PuntoChecklist, ResultadoPunto } from '../../models/motocheck.models';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
@@ -15,7 +17,7 @@ const VACIO: Resultados = { llantas: null, aceite: null, cadena: null, frenos: n
   selector: 'app-checklist',
   templateUrl: './checklist.page.html',
   styleUrls: ['./checklist.page.scss'],
-  imports: [IonContent, IonIcon, RouterLink],
+  imports: [IonContent, IonIcon, RouterLink, TranslocoPipe],
 })
 export class ChecklistPage {
   private storage = inject(StorageService);
@@ -23,6 +25,10 @@ export class ChecklistPage {
   private ui = inject(UiService);
 
   readonly items = CHECKLIST;
+  readonly puntos = computed(() =>
+    CHECKLIST.map((it) => ({ ...it, nombre: textoPunto(it.id, 'nombre'), ayuda: textoPunto(it.id, 'ayuda') })),
+  );
+  readonly faltan = computed(() => tPlural(this.pendientes(), 'checklist.faltan'));
   readonly resultados = signal<Resultados>({ ...VACIO });
 
   readonly revisados = computed(() => Object.values(this.resultados()).filter((r) => r !== null).length);
@@ -30,8 +36,9 @@ export class ChecklistPage {
   readonly pendientes = computed(() => this.items.length - this.revisados());
   readonly fallas = computed(() => this.items.filter((i) => this.resultados()[i.id] === 'no_aprobado'));
   readonly nombresFallas = computed(() =>
-    this.fallas()
-      .map((f) => f.nombre.toLowerCase())
+    this.puntos()
+      .filter((p) => this.resultados()[p.id] === 'no_aprobado')
+      .map((p) => p.nombre.toLowerCase())
       .join(', '),
   );
 
@@ -45,7 +52,7 @@ export class ChecklistPage {
 
   async finalizar(): Promise<void> {
     if (this.pendientes() > 0) {
-      await this.ui.aviso(`Revisa los ${this.pendientes()} puntos pendientes antes de finalizar.`, 'warning');
+      await this.ui.aviso(tPlural(this.pendientes(), 'checklist.pendientesAviso'), 'warning');
       return;
     }
     await this.storage.guardarInspeccion({ fecha: new Date().toISOString(), resultados: this.resultados() });

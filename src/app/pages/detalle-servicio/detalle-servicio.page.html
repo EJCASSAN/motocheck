@@ -1,56 +1,56 @@
 <ion-content>
   <div class="mc-page">
-    <nav class="mc-row-between" aria-label="Volver">
+    <nav class="mc-row-between" [attr.aria-label]="'comun.volver' | transloco">
       <button type="button" class="mc-back" (click)="volver()">
         <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-        Bitácora
+        {{ 'tabs.bitacora' | transloco }}
       </button>
       @if (registro()) {
-      <button type="button" class="mc-back" (click)="editar()">Editar</button>
+      <button type="button" class="mc-back" (click)="editar()">{{ 'comun.editar' | transloco }}</button>
       }
     </nav>
 
     @if (registro(); as r) {
     <header class="cabecera">
       <div class="mc-tile-icon grande"><ion-icon [name]="iconos[r.tipo]" aria-hidden="true"></ion-icon></div>
-      <h1 class="mc-title">{{ nombres[r.tipo] }}</h1>
+      <h1 class="mc-title">{{ nombreServicio(r.tipo) }}</h1>
       <span class="mc-muted">{{ fechaLarga() }}</span>
     </header>
 
-    <section class="mc-card datos" aria-label="Datos del servicio">
+    <section class="mc-card datos" [attr.aria-label]="'detalle.datos' | transloco">
       <div class="dato completo">
-        <span class="mc-muted">Costo total</span>
+        <span class="mc-muted">{{ 'detalle.costoTotal' | transloco }}</span>
         <span class="mc-display costo">${{ miles(r.costo) }} <small>COP</small></span>
       </div>
       <div class="dato">
-        <span class="mc-muted">Kilometraje</span>
+        <span class="mc-muted">{{ 'servicioForm.kilometraje' | transloco }}</span>
         <span class="mc-display">{{ miles(r.kilometraje) }} km</span>
       </div>
       @if (intervalo(); as i) {
       <div class="dato">
-        <span class="mc-muted">Próximo cambio</span>
+        <span class="mc-muted">{{ 'detalle.proximoCambio' | transloco }}</span>
         <span class="mc-display proximo">{{ miles(r.kilometraje + i) }} km</span>
       </div>
       <div class="dato">
-        <span class="mc-muted">Intervalo</span>
-        <span class="mc-display">Cada {{ miles(i) }} km</span>
+        <span class="mc-muted">{{ 'detalle.intervalo' | transloco }}</span>
+        <span class="mc-display">{{ 'detalle.cada' | transloco: { km: miles(i) } }}</span>
       </div>
       }
     </section>
 
     <section class="notas">
-      <h2 class="mc-section">Insumos y notas</h2>
-      <p class="mc-card">{{ r.insumosNotas || 'Sin observaciones adicionales.' }}</p>
+      <h2 class="mc-section">{{ 'servicioForm.notas' | transloco }}</h2>
+      <p class="mc-card">{{ r.insumosNotas || ('detalle.sinNotas' | transloco) }}</p>
     </section>
 
     <button type="button" class="mc-btn danger" (click)="eliminar()">
       <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
-      Eliminar registro
+      {{ 'detalle.eliminarTitulo' | transloco }}
     </button>
     } @else {
     <div class="mc-empty">
       <ion-icon name="document-outline" aria-hidden="true"></ion-icon>
-      <p>Este servicio ya no existe.</p>
+      <p>{{ 'detalle.noExiste' | transloco }}</p>
     </div>
     }
   </div>

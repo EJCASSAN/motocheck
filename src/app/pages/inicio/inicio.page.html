@@ -3,26 +3,26 @@
   <div class="mc-page">
     <header class="mc-row-between">
       <div class="moto">
-        <span class="mc-muted">Mi moto</span>
+        <span class="mc-muted">{{ 'inicio.miMoto' | transloco }}</span>
         <div class="nombre">
           <h1 class="mc-title">{{ p.marca }} {{ p.modelo }}</h1>
           <span class="placa mc-display">{{ formatoPlaca(p.placa) }}</span>
         </div>
       </div>
-      <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+      <a class="mc-icon-btn" routerLink="/ajustes" [attr.aria-label]="'comun.ajustesYPerfil' | transloco">
         <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
       </a>
     </header>
 
-    <section class="mc-card odometro" aria-label="Odómetro">
+    <section class="mc-card odometro" [attr.aria-label]="'inicio.odometro' | transloco">
       <div class="mc-row-between">
-        <span class="mc-overline">Odómetro actual</span>
-        <span class="mc-muted">Actualizado {{ actualizado() }}</span>
+        <span class="mc-overline">{{ 'inicio.odometroActual' | transloco }}</span>
+        <span class="mc-muted">{{ 'inicio.actualizado' | transloco: { cuando: actualizado() } }}</span>
       </div>
       <button
         type="button"
         class="valor"
-        [attr.aria-label]="'Odómetro: ' + miles(p.kilometrajeActual) + ' km. Tocar para actualizar'"
+        [attr.aria-label]="'inicio.odometroAria' | transloco: { km: miles(p.kilometrajeActual) }"
         (click)="actualizarKm()"
       >
         <span class="mc-display">{{ miles(p.kilometrajeActual) }}</span>
@@ -30,29 +30,29 @@
       </button>
       <button type="button" class="mc-btn primary" (click)="actualizarKm()">
         <ion-icon name="speedometer-outline" aria-hidden="true"></ion-icon>
-        Actualizar kilometraje
+        {{ 'inicio.actualizarKm' | transloco }}
       </button>
     </section>
 
-    <section class="resumen" aria-label="Resumen de estados">
+    <section class="resumen" [attr.aria-label]="'inicio.resumen' | transloco">
       <div class="mc-card estado-vencido">
         <span class="mc-display">{{ totales().vencido }}</span>
-        <span>Vencido</span>
+        <span>{{ 'estado.vencido' | transloco }}</span>
       </div>
       <div class="mc-card estado-proximo">
         <span class="mc-display">{{ totales().proximo }}</span>
-        <span>Próximo</span>
+        <span>{{ 'estado.proximo' | transloco }}</span>
       </div>
       <div class="mc-card estado-optimo">
         <span class="mc-display">{{ totales().optimo }}</span>
-        <span>Al día</span>
+        <span>{{ 'estado.optimo' | transloco }}</span>
       </div>
     </section>
 
     <section class="lista">
       <div class="mc-row-between">
-        <h2 class="mc-section">Mantenimientos</h2>
-        <span class="mc-muted">Toca uno para registrarlo</span>
+        <h2 class="mc-section">{{ 'inicio.mantenimientos' | transloco }}</h2>
+        <span class="mc-muted">{{ 'inicio.tocaUno' | transloco }}</span>
       </div>
 
       @for (a of alertas(); track a.tipo) {
@@ -60,10 +60,10 @@
         <div class="fila">
           <div class="mc-tile-icon"><ion-icon [name]="iconos[a.tipo]" aria-hidden="true"></ion-icon></div>
           <div class="texto">
-            <span class="titulo">{{ a.nombre }}</span>
+            <span class="titulo">{{ nombreServicio(a.tipo) }}</span>
             <span class="mc-muted">{{ detalle(a) }}</span>
           </div>
-          <span class="mc-badge">{{ etiquetaEstado[a.estado] }}</span>
+          <span class="mc-badge">{{ 'estado.' + a.estado | transloco }}</span>
         </div>
         <div
           class="mc-bar"

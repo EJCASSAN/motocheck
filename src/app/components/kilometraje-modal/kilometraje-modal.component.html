@@ -1,34 +1,34 @@
 <ion-content>
   <div class="mc-sheet-header">
-    <button type="button" class="mc-back" (click)="cancelar()">Cancelar</button>
-    <h1 id="km-title">Actualizar kilometraje</h1>
+    <button type="button" class="mc-back" (click)="cancelar()">{{ 'comun.cancelar' | transloco }}</button>
+    <h1 id="km-title">{{ 'inicio.actualizarKm' | transloco }}</h1>
     <span></span>
   </div>
 
   <section class="mc-page" aria-labelledby="km-title">
     <div class="mc-card display" aria-live="polite">
-      <span class="mc-overline">Nuevo valor del odómetro</span>
+      <span class="mc-overline">{{ 'km.nuevoValor' | transloco }}</span>
       <div class="valor">
         <span class="mc-display">{{ valor ? miles(numero) : '0' }}</span>
         <span class="unidad">km</span>
       </div>
       <span class="delta" [class.error]="!valido">
         @if (valor === '') {
-          Escribe el valor del odómetro
+          {{ 'km.escribeValor' | transloco }}
         } @else if (diferencia >= 0) {
-          +{{ miles(diferencia) }} km desde la última vez
+          {{ 'km.diferencia' | transloco: { km: miles(diferencia) } }}
         } @else {
-          No puede ser menor que {{ miles(anterior) }} km
+          {{ 'km.menorQue' | transloco: { km: miles(anterior) } }}
         }
       </span>
     </div>
 
     <div class="mc-row-between mc-muted">
-      <span>Anterior: {{ miles(anterior) }} km</span>
-      <span>Actualizado {{ actualizado }}</span>
+      <span>{{ 'km.anterior' | transloco: { km: miles(anterior) } }}</span>
+      <span>{{ 'inicio.actualizado' | transloco: { cuando: actualizado } }}</span>
     </div>
 
-    <div class="teclado" role="group" aria-label="Teclado numérico">
+    <div class="teclado" role="group" [attr.aria-label]="'km.teclado' | transloco">
       @for (t of teclas; track t) {
         <button type="button" class="tecla" [attr.aria-label]="etiqueta(t)" (click)="presionar(t)">
           @if (t === '⌫') {
@@ -40,6 +40,8 @@
       }
     </div>
 
-    <button type="button" class="mc-btn primary" [disabled]="!valido" (click)="guardar()">Guardar kilometraje</button>
+    <button type="button" class="mc-btn primary" [disabled]="!valido" (click)="guardar()">
+      {{ 'km.guardar' | transloco }}
+    </button>
   </section>
 </ion-content>

@@ -25,31 +25,9 @@ header p {
   }
 }
 
-.segmentos {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px;
-  padding: 4px;
-  border-radius: 12px;
-  background: var(--mc-surface);
-  border: 1px solid var(--mc-border);
-}
-
-.segmento {
-  height: 40px;
-  border-radius: 9px;
-  border: none;
-  background: transparent;
-  color: var(--mc-muted);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-
-  &.on {
-    background: var(--mc-warning);
-    color: #1a1606;
-  }
+.mc-segmento.on {
+  background: var(--mc-warning);
+  color: #1a1606;
 }
 
 .lista {

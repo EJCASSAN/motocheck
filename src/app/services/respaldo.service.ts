@@ -3,6 +3,8 @@ import { Capacitor } from '@capacitor/core';
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 
+import { t } from '../i18n/idioma';
+
 import { StorageService } from './storage.service';
 import { LIMITES_RESPALDO } from './validacion-datos';
 
@@ -21,7 +23,7 @@ export class RespaldoService {
         directory: Directory.Cache,
         encoding: Encoding.UTF8,
       });
-      await Share.share({ title: 'Respaldo MotoCheck', files: [archivo.uri] });
+      await Share.share({ title: t('ajustes.compartirTitulo'), files: [archivo.uri] });
     } else {
       const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
       const enlace = document.createElement('a');

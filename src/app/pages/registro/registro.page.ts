@@ -3,7 +3,9 @@ import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon, NavController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { t } from '../../i18n/idioma';
 import type { PerfilMoto } from '../../models/motocheck.models';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
@@ -19,7 +21,7 @@ type Campo = 'marca' | 'modelo' | 'cilindraje' | 'placa' | 'kilometraje';
   selector: 'app-registro',
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
-  imports: [FormsModule, IonContent, IonIcon],
+  imports: [FormsModule, IonContent, IonIcon, TranslocoPipe],
 })
 export class RegistroPage implements OnInit {
   @Input() modo: 'registro' | 'editar' = 'registro';
@@ -42,17 +44,17 @@ export class RegistroPage implements OnInit {
 
   get errores(): Partial<Record<Campo, string>> {
     const e: Partial<Record<Campo, string>> = {};
-    if (!this.marca.trim()) e.marca = 'Escribe la marca.';
-    else if (this.marca.trim().length > MAX_TEXTO) e.marca = 'Máximo 50 caracteres.';
-    if (!this.modelo.trim()) e.modelo = 'Escribe la línea o modelo.';
-    else if (this.modelo.trim().length > MAX_TEXTO) e.modelo = 'Máximo 50 caracteres.';
-    if (!this.cilindraje) e.cilindraje = 'Escribe el cilindraje.';
-    else if (this.cilindraje < 50 || this.cilindraje > 2500) e.cilindraje = 'Entre 50 y 2.500 cc.';
-    if (!this.placa.trim()) e.placa = 'Escribe la placa.';
-    else if (!PLACA_REGEX.test(this.placaNormalizada)) e.placa = 'Formato: ABC12D o ABC12.';
+    if (!this.marca.trim()) e.marca = 'registro.errores.marcaVacia';
+    else if (this.marca.trim().length > MAX_TEXTO) e.marca = 'registro.errores.maximo50';
+    if (!this.modelo.trim()) e.modelo = 'registro.errores.modeloVacio';
+    else if (this.modelo.trim().length > MAX_TEXTO) e.modelo = 'registro.errores.maximo50';
+    if (!this.cilindraje) e.cilindraje = 'registro.errores.cilindrajeVacio';
+    else if (this.cilindraje < 50 || this.cilindraje > 2500) e.cilindraje = 'registro.errores.cilindrajeRango';
+    if (!this.placa.trim()) e.placa = 'registro.errores.placaVacia';
+    else if (!PLACA_REGEX.test(this.placaNormalizada)) e.placa = 'registro.errores.placaFormato';
     if (!this.editando) {
-      if (this.kilometraje === null || `${this.kilometraje}` === '') e.kilometraje = 'Escribe el kilometraje.';
-      else if (this.kilometraje < 0) e.kilometraje = 'No puede ser negativo.';
+      if (this.kilometraje === null || `${this.kilometraje}` === '') e.kilometraje = 'registro.errores.kmVacio';
+      else if (this.kilometraje < 0) e.kilometraje = 'registro.errores.kmNegativo';
     }
     return e;
   }
@@ -62,7 +64,8 @@ export class RegistroPage implements OnInit {
   }
 
   error(campo: Campo): string {
-    return this.intentoGuardar ? (this.errores[campo] ?? '') : '';
+    const clave = this.intentoGuardar ? this.errores[campo] : undefined;
+    return clave ? t(clave) : '';
   }
 
   ngOnInit(): void {
@@ -82,7 +85,7 @@ export class RegistroPage implements OnInit {
   async guardar(): Promise<void> {
     this.intentoGuardar = true;
     if (Object.keys(this.errores).length > 0) {
-      await this.ui.aviso('Revisa los campos marcados en rojo.', 'danger');
+      await this.ui.aviso(t('registro.revisaCampos'), 'danger');
       return;
     }
 
@@ -96,7 +99,7 @@ export class RegistroPage implements OnInit {
 
     if (this.editando && actual) {
       await this.storage.guardarPerfil({ ...actual, ...datos });
-      await this.ui.aviso('Datos de la moto actualizados.');
+      await this.ui.aviso(t('registro.motoActualizada'));
       this.nav.back();
       return;
     }

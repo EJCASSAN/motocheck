@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 
-import { INTERVALOS_DEFAULT, NOMBRES_SERVICIO, PREFERENCIAS_DEFAULT, TIPOS_PERIODICOS } from '../models/catalogo';
+import { INTERVALOS_DEFAULT, PREFERENCIAS_DEFAULT, TIPOS_PERIODICOS } from '../models/catalogo';
 import type {
   AlertaMantenimiento,
   ConfiguracionIntervalos,
@@ -50,7 +50,6 @@ export function calcularAlertas(
 
     return {
       tipo,
-      nombre: NOMBRES_SERVICIO[tipo],
       kmRecorridos,
       intervaloKm,
       kmRestantes: intervaloKm - kmRecorridos,

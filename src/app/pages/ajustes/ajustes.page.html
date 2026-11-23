@@ -1,13 +1,13 @@
 <ion-content>
   <div class="mc-page">
-    <nav aria-label="Volver">
+    <nav [attr.aria-label]="'comun.volver' | transloco">
       <button type="button" class="mc-back" (click)="volver()">
         <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-        Volver
+        {{ 'comun.volver' | transloco }}
       </button>
     </nav>
 
-    <h1 class="mc-title">Ajustes</h1>
+    <h1 class="mc-title">{{ 'ajustes.titulo' | transloco }}</h1>
 
     @if (perfil(); as p) {
     <a class="mc-card moto" routerLink="/editar-moto">
@@ -15,19 +15,39 @@
       <div class="texto">
         <span class="titulo">{{ p.marca }} {{ p.modelo }}</span>
         <span class="mc-muted"
-          >{{ p.cilindraje }} cc · {{ formatoPlaca(p.placa) }} · desde {{ miles(p.kilometrajeInicial) }} km</span
+          >{{ 'ajustes.motoResumen' | transloco: { cc: p.cilindraje, placa: formatoPlaca(p.placa), km:
+          miles(p.kilometrajeInicial) } }}</span
         >
       </div>
-      <span class="editar">Editar</span>
+      <span class="editar">{{ 'comun.editar' | transloco }}</span>
     </a>
     }
 
     <section class="grupo">
-      <h2 class="mc-overline">Mantenimiento</h2>
+      <h2 id="lbl-idioma" class="mc-overline">{{ 'ajustes.idioma' | transloco }}</h2>
+      <div class="mc-segmentos" role="radiogroup" aria-labelledby="lbl-idioma">
+        @for (opcion of opcionesIdioma; track opcion) {
+        <button
+          type="button"
+          role="radio"
+          class="mc-segmento"
+          [class.on]="idioma() === opcion"
+          [attr.aria-checked]="idioma() === opcion"
+          [attr.lang]="opcion"
+          (click)="cambiarIdioma(opcion)"
+        >
+          {{ 'ajustes.nombreIdioma.' + opcion | transloco }}
+        </button>
+        }
+      </div>
+    </section>
+
+    <section class="grupo">
+      <h2 class="mc-overline">{{ 'ajustes.mantenimiento' | transloco }}</h2>
       <div class="mc-card lista">
         <a class="fila" routerLink="/intervalos">
           <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
-          <span class="etiqueta">Intervalos de servicio</span>
+          <span class="etiqueta">{{ 'intervalos.titulo' | transloco }}</span>
           <ion-icon name="chevron-forward-outline" class="flecha" aria-hidden="true"></ion-icon>
         </a>
         <div class="fila">
@@ -38,25 +58,25 @@
             [checked]="preferencias().avisosActivos"
             (ionChange)="cambiarAvisos($event)"
           >
-            Avisos de mantenimiento
+            {{ 'ajustes.avisos' | transloco }}
           </ion-toggle>
         </div>
       </div>
     </section>
 
     <section class="grupo">
-      <h2 class="mc-overline">Datos y respaldo</h2>
+      <h2 class="mc-overline">{{ 'ajustes.datos' | transloco }}</h2>
       <div class="mc-card lista">
         <button type="button" class="fila" (click)="exportar()">
           <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
           <span class="etiqueta">
-            Exportar respaldo (.json)
-            <small>Último: {{ ultimoRespaldo() }}</small>
+            {{ 'ajustes.exportar' | transloco }}
+            <small>{{ 'ajustes.ultimo' | transloco: { fecha: ultimoRespaldo() } }}</small>
           </span>
         </button>
         <button type="button" class="fila" (click)="elegirArchivo()">
           <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
-          <span class="etiqueta">Importar respaldo</span>
+          <span class="etiqueta">{{ 'ajustes.importar' | transloco }}</span>
         </button>
         <input #archivo type="file" accept=".json,application/json" hidden (change)="importar($event)" />
         <div class="fila">
@@ -67,19 +87,19 @@
             [checked]="preferencias().respaldoAutomatico"
             (ionChange)="cambiarRespaldoAutomatico($event)"
           >
-            Respaldo automático semanal
-            <small class="pendiente">Próximamente</small>
+            {{ 'ajustes.respaldoAuto' | transloco }}
+            <small class="pendiente">{{ 'ajustes.proximamente' | transloco }}</small>
           </ion-toggle>
         </div>
       </div>
       <span class="mc-muted nota">
         <ion-icon name="phone-portrait-outline" aria-hidden="true"></ion-icon>
-        Todo se guarda en este teléfono · {{ espacio() }} KB usados
+        {{ 'ajustes.espacio' | transloco: { kb: espacio() } }}
       </span>
     </section>
 
-    <button type="button" class="mc-btn danger" (click)="borrarTodo()">Borrar todos los datos</button>
+    <button type="button" class="mc-btn danger" (click)="borrarTodo()">{{ 'ajustes.borrarTodo' | transloco }}</button>
 
-    <p class="version mc-muted">MotoCheck 1.0 · Funciona 100% sin conexión</p>
+    <p class="version mc-muted">{{ 'ajustes.version' | transloco }}</p>
   </div>
 </ion-content>

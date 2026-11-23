@@ -1,7 +1,9 @@
 import type { OnInit } from '@angular/core';
 import { Component, inject } from '@angular/core';
 import { IonContent, IonIcon, ModalController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { t } from '../../i18n/idioma';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { haceCuanto, miles } from '../../utils/formato';
@@ -12,7 +14,7 @@ const MAX_DIGITOS = 7;
   selector: 'app-kilometraje-modal',
   templateUrl: './kilometraje-modal.component.html',
   styleUrls: ['./kilometraje-modal.component.scss'],
-  imports: [IonContent, IonIcon],
+  imports: [IonContent, IonIcon, TranslocoPipe],
 })
 export class KilometrajeModalComponent implements OnInit {
   private storage = inject(StorageService);
@@ -23,8 +25,12 @@ export class KilometrajeModalComponent implements OnInit {
   readonly miles = miles;
 
   anterior = 0;
-  actualizado = '';
+  private ultimaActualizacion = '';
   valor = '';
+
+  get actualizado(): string {
+    return this.ultimaActualizacion ? haceCuanto(this.ultimaActualizacion) : '';
+  }
 
   get numero(): number {
     return parseInt(this.valor || '0', 10);
@@ -41,7 +47,7 @@ export class KilometrajeModalComponent implements OnInit {
   ngOnInit(): void {
     const perfil = this.storage.perfil();
     this.anterior = perfil?.kilometrajeActual ?? 0;
-    this.actualizado = perfil ? haceCuanto(perfil.ultimaActualizacionKm) : '';
+    this.ultimaActualizacion = perfil?.ultimaActualizacionKm ?? '';
     this.valor = String(this.anterior);
   }
 
@@ -52,8 +58,8 @@ export class KilometrajeModalComponent implements OnInit {
   }
 
   etiqueta(tecla: string): string {
-    if (tecla === '⌫') return 'Borrar un dígito';
-    if (tecla === 'C') return 'Borrar todo';
+    if (tecla === '⌫') return t('km.borrarDigito');
+    if (tecla === 'C') return t('km.borrarTodo');
     return tecla;
   }
 
@@ -65,10 +71,10 @@ export class KilometrajeModalComponent implements OnInit {
     if (!this.valido) return;
     const ok = await this.storage.actualizarKilometraje(this.numero);
     if (!ok) {
-      await this.ui.aviso('No se pudo guardar el kilometraje.', 'danger');
+      await this.ui.aviso(t('km.errorGuardar'), 'danger');
       return;
     }
-    await this.ui.aviso('Kilometraje actualizado.');
+    await this.ui.aviso(t('km.actualizado'));
     await this.modalCtrl.dismiss(this.numero, 'saved');
   }
 }

@@ -2,20 +2,20 @@ import type { OnInit } from '@angular/core';
 import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon, ModalController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { ETIQUETAS_CORTAS, ICONOS_SERVICIO } from '../../models/catalogo';
+import { t } from '../../i18n/idioma';
+import { ICONOS_SERVICIO, TIPOS_SERVICIO, etiquetaCorta } from '../../models/catalogo';
 import type { RegistroMantenimiento, TipoMantenimiento } from '../../models/motocheck.models';
 import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { hoyISO } from '../../utils/formato';
 
-const TIPOS: TipoMantenimiento[] = ['aceite', 'cadena', 'frenos', 'filtros', 'bujias', 'kit_arrastre', 'otro'];
-
 @Component({
   selector: 'app-servicio-form',
   templateUrl: './servicio-form.component.html',
   styleUrls: ['./servicio-form.component.scss'],
-  imports: [FormsModule, IonContent, IonIcon],
+  imports: [FormsModule, IonContent, IonIcon, TranslocoPipe],
 })
 export class ServicioFormComponent implements OnInit {
   @Input() tipoInicial: TipoMantenimiento = 'aceite';
@@ -25,7 +25,8 @@ export class ServicioFormComponent implements OnInit {
   private modalCtrl = inject(ModalController);
   private ui = inject(UiService);
 
-  readonly categorias = TIPOS.map((id) => ({ id, label: ETIQUETAS_CORTAS[id], icono: ICONOS_SERVICIO[id] }));
+  readonly categorias = TIPOS_SERVICIO.map((id) => ({ id, icono: ICONOS_SERVICIO[id] }));
+  readonly etiquetaCorta = etiquetaCorta;
   readonly hoy = hoyISO();
 
   tipo: TipoMantenimiento = 'aceite';
@@ -38,18 +39,18 @@ export class ServicioFormComponent implements OnInit {
 
   get errorKm(): string {
     if (this.kilometraje === null || this.kilometraje === undefined || `${this.kilometraje}` === '') {
-      return 'Escribe el kilometraje del servicio.';
+      return t('servicioForm.errores.kmVacio');
     }
-    return this.kilometraje < 0 ? 'El kilometraje no puede ser negativo.' : '';
+    return this.kilometraje < 0 ? t('servicioForm.errores.kmNegativo') : '';
   }
 
   get errorFecha(): string {
-    if (!this.fecha) return 'Elige la fecha.';
-    return this.fecha > this.hoy ? 'La fecha no puede ser futura.' : '';
+    if (!this.fecha) return t('servicioForm.errores.fechaVacia');
+    return this.fecha > this.hoy ? t('servicioForm.errores.fechaFutura') : '';
   }
 
   get errorCosto(): string {
-    return this.costo !== null && this.costo < 0 ? 'El costo no puede ser negativo.' : '';
+    return this.costo !== null && this.costo < 0 ? t('servicioForm.errores.costoNegativo') : '';
   }
 
   ngOnInit(): void {
@@ -84,7 +85,7 @@ export class ServicioFormComponent implements OnInit {
       },
       this.registro?.id,
     );
-    await this.ui.aviso(this.registro ? 'Servicio actualizado.' : 'Servicio guardado en la bitácora.');
+    await this.ui.aviso(t(this.registro ? 'servicioForm.actualizado' : 'servicioForm.guardado'));
     await this.modalCtrl.dismiss(guardado, 'saved');
   }
 }

@@ -1,11 +1,13 @@
 import type { OnInit } from '@angular/core';
 import { Component, inject } from '@angular/core';
 import { IonContent, IonIcon, NavController } from '@ionic/angular';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { t } from '../../i18n/idioma';
 import {
   INTERVALOS_DEFAULT,
   INTERVALO_MINIMO_KM,
-  NOMBRES_SERVICIO,
+  nombreServicio,
   PASO_INTERVALO,
   TIPOS_PERIODICOS,
 } from '../../models/catalogo';
@@ -20,7 +22,7 @@ const INTERVALO_MAXIMO_KM = 100_000;
   selector: 'app-intervalos',
   templateUrl: './intervalos.page.html',
   styleUrls: ['./intervalos.page.scss'],
-  imports: [IonContent, IonIcon],
+  imports: [IonContent, IonIcon, TranslocoPipe],
 })
 export class IntervalosPage implements OnInit {
   private storage = inject(StorageService);
@@ -28,7 +30,7 @@ export class IntervalosPage implements OnInit {
   private nav = inject(NavController);
 
   readonly tipos = TIPOS_PERIODICOS;
-  readonly nombres = NOMBRES_SERVICIO;
+  readonly nombreServicio = nombreServicio;
   readonly umbrales: UmbralAviso[] = [70, 80, 90];
   readonly minimo = INTERVALO_MINIMO_KM;
   readonly miles = miles;
@@ -54,7 +56,7 @@ export class IntervalosPage implements OnInit {
 
   async guardar(): Promise<void> {
     await this.storage.guardarIntervalos(structuredClone(this.config));
-    await this.ui.aviso('Intervalos guardados. Las alertas se recalcularon.');
+    await this.ui.aviso(t('intervalos.guardados'));
     this.nav.back();
   }
 }

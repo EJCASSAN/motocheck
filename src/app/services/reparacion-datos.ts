@@ -1,3 +1,4 @@
+import { idiomaOpcional } from '../i18n/idioma';
 import { INTERVALOS_DEFAULT, PREFERENCIAS_DEFAULT, TIPOS_PERIODICOS } from '../models/catalogo';
 import type {
   ConfiguracionIntervalos,
@@ -67,11 +68,12 @@ export function repararIntervalos(valor: unknown): ConfiguracionIntervalos {
 
 export function repararPreferencias(valor: unknown): Preferencias {
   if (!esObjeto(valor)) return { ...PREFERENCIAS_DEFAULT };
-  const { avisosActivos, respaldoAutomatico, ultimoRespaldo } = valor;
+  const { avisosActivos, respaldoAutomatico, ultimoRespaldo, idioma } = valor;
   return {
     avisosActivos: typeof avisosActivos === 'boolean' ? avisosActivos : PREFERENCIAS_DEFAULT.avisosActivos,
     respaldoAutomatico:
       typeof respaldoAutomatico === 'boolean' ? respaldoAutomatico : PREFERENCIAS_DEFAULT.respaldoAutomatico,
     ultimoRespaldo: typeof ultimoRespaldo === 'string' ? ultimoRespaldo : null,
+    ...idiomaOpcional(idioma),
   };
 }

@@ -1,6 +1,3 @@
-import { registerLocaleData } from '@angular/common';
-import localeEsCO from '@angular/common/locales/es-CO';
-import { LOCALE_ID } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import {
   PreloadAllModules,
@@ -53,8 +50,7 @@ import {
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-
-registerLocaleData(localeEsCO);
+import { provideIdiomas } from './app/i18n/i18n.providers';
 
 addIcons({
   addOutline,
@@ -99,8 +95,8 @@ addIcons({
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: LOCALE_ID, useValue: 'es-CO' },
     provideIonicAngular({ mode: 'md' }),
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
+    provideIdiomas(),
   ],
 });

@@ -1,0 +1,295 @@
+{
+  "comun": {
+    "cancelar": "Cancel",
+    "volver": "Back",
+    "editar": "Edit",
+    "ajustesYPerfil": "Settings and profile",
+    "guardarCambios": "Save changes"
+  },
+  "fechas": {
+    "sinFecha": "No date",
+    "hoy": "today",
+    "ayer": "yesterday",
+    "haceDias": {
+      "uno": "1 day ago",
+      "varios": "{{n}} days ago"
+    },
+    "haceMeses": {
+      "uno": "1 month ago",
+      "varios": "{{n}} months ago"
+    },
+    "mesAnio": "{{mes}} {{anio}}",
+    "diaMes": "{{mes}} {{dia}}"
+  },
+  "estado": {
+    "vencido": "Overdue",
+    "proximo": "Due soon",
+    "optimo": "Up to date"
+  },
+  "servicio": {
+    "aceite": {
+      "nombre": "Engine oil",
+      "corto": "Oil"
+    },
+    "cadena": {
+      "nombre": "Chain tension",
+      "corto": "Chain"
+    },
+    "frenos": {
+      "nombre": "Brake pads",
+      "corto": "Brakes"
+    },
+    "filtros": {
+      "nombre": "Air filter",
+      "corto": "Filters"
+    },
+    "bujias": {
+      "nombre": "Spark plugs",
+      "corto": "Plugs"
+    },
+    "kit_arrastre": {
+      "nombre": "Drive kit",
+      "corto": "Drive kit"
+    },
+    "otro": {
+      "nombre": "Other service",
+      "corto": "Other"
+    }
+  },
+  "checklist": {
+    "puntos": {
+      "llantas": {
+        "nombre": "Tires",
+        "ayuda": "Pressure and wear",
+        "recomendacion": "Set the pressure from the manual and replace the tire if the tread is below the wear mark."
+      },
+      "aceite": {
+        "nombre": "Oil level",
+        "ayuda": "Between min. and max.",
+        "recomendacion": "Top up with the recommended oil and check for leaks before you ride."
+      },
+      "cadena": {
+        "nombre": "Chain tension",
+        "ayuda": "2–3 cm of slack",
+        "recomendacion": "Adjust and lube the chain, leaving 2 to 3 cm of free play."
+      },
+      "frenos": {
+        "nombre": "Brake fluid",
+        "ayuda": "Level and color",
+        "recomendacion": "Don't ride until you've checked the fluid level and pad thickness."
+      },
+      "luces": {
+        "nombre": "Lights",
+        "ayuda": "High, low, brake light, turn signals",
+        "recomendacion": "Replace the broken bulb or fuse: riding without lights is dangerous and gets you fined."
+      }
+    },
+    "titulo": "Pre-ride",
+    "subtitulo": "Check {{n}} points before you ride",
+    "reiniciar": "Reset",
+    "progreso": "Progress",
+    "revisados": "{{n}} of {{total}} checked",
+    "aprobadoAria": "{{nombre}}: passed",
+    "noAprobadoAria": "{{nombre}}: failed",
+    "noSeguro": "Not safe to ride yet",
+    "revisaLista": "Check: {{lista}}",
+    "lista": "Ready to ride",
+    "todosAprobados": "All critical points passed.",
+    "faltan": {
+      "uno": "1 point left to check.",
+      "varios": "{{n}} points left to check."
+    },
+    "pendientesAviso": {
+      "uno": "Check the pending point before finishing.",
+      "varios": "Check the {{n}} pending points before finishing."
+    },
+    "finalizar": "Finish check"
+  },
+  "avisos": {
+    "tituloVencido": "{{nombre}}: overdue",
+    "tituloProximo": "{{nombre}}: due soon",
+    "cuerpoPasado": "You are {{km}} km past the interval.",
+    "cuerpoFaltan": "{{km}} km left until the next service."
+  },
+  "ajustes": {
+    "titulo": "Settings",
+    "motoResumen": "{{cc}} cc · {{placa}} · since {{km}} km",
+    "idioma": "Language",
+    "nombreIdioma": {
+      "es": "Español",
+      "en": "English"
+    },
+    "idiomaCambiado": "Language changed.",
+    "mantenimiento": "Maintenance",
+    "avisos": "Maintenance reminders",
+    "datos": "Data and backup",
+    "exportar": "Export backup (.json)",
+    "ultimo": "Last: {{fecha}}",
+    "nunca": "never",
+    "importar": "Import backup",
+    "importarMensaje": "Your current data will be replaced by the file's data.",
+    "importarBoton": "Import",
+    "respaldoAuto": "Weekly automatic backup",
+    "proximamente": "Coming soon",
+    "espacio": "Everything is stored on this phone · {{kb}} KB used",
+    "borrarTodo": "Delete all data",
+    "borrarMensaje": "Your bike, service log and settings will be deleted from this phone. Export a backup first if you need it.",
+    "borrarBoton": "Delete all",
+    "borrados": "Data deleted.",
+    "version": "MotoCheck 1.0 · Works 100% offline",
+    "permisoAvisos": "Turn on MotoCheck notifications in your phone settings.",
+    "avisosActivados": "Reminders on.",
+    "avisosDesactivados": "Reminders off.",
+    "respaldoAutoPendiente": "Automatic backup will be available in the final version.",
+    "exportado": "Backup exported.",
+    "noExportado": "The backup was not exported.",
+    "restaurado": "Backup restored.",
+    "archivoInvalido": "This file is not a valid MotoCheck backup.",
+    "compartirTitulo": "MotoCheck backup",
+    "idiomaError": "The language could not be changed."
+  },
+  "registro": {
+    "tituloBienvenida": "Welcome to MotoCheck",
+    "tituloEditar": "Edit my bike",
+    "introRegistro": "Register your bike once and we'll tell you when each service is due.",
+    "introEditar": "Correct your bike's details. Update the odometer from Home.",
+    "marca": "Brand",
+    "marcaEjemplo": "e.g. Yamaha",
+    "modelo": "Model",
+    "modeloEjemplo": "e.g. MT-03",
+    "cilindraje": "Displacement",
+    "placa": "Plate",
+    "kmActual": "Current odometer reading",
+    "kmAyuda": "Service alerts are based on this number.",
+    "privacidad": "Your data stays on this phone only. It works offline, even on the road.",
+    "comenzar": "Start tracking",
+    "revisaCampos": "Check the fields marked in red.",
+    "motoActualizada": "Bike details updated.",
+    "errores": {
+      "marcaVacia": "Enter the brand.",
+      "modeloVacio": "Enter the model.",
+      "maximo50": "50 characters max.",
+      "cilindrajeVacio": "Enter the displacement.",
+      "cilindrajeRango": "Between 50 and 2,500 cc.",
+      "placaVacia": "Enter the plate.",
+      "placaFormato": "Format: ABC12D or ABC12.",
+      "kmVacio": "Enter the odometer reading.",
+      "kmNegativo": "It cannot be negative."
+    }
+  },
+  "inicio": {
+    "miMoto": "My bike",
+    "odometro": "Odometer",
+    "odometroActual": "Current odometer",
+    "actualizado": "Updated {{cuando}}",
+    "odometroAria": "Odometer: {{km}} km. Tap to update",
+    "actualizarKm": "Update odometer",
+    "resumen": "Status summary",
+    "mantenimientos": "Maintenance",
+    "tocaUno": "Tap one to log it",
+    "kmDeIntervalo": "{{recorridos}} km of {{intervalo}} km",
+    "faltanKm": "{{km}} km left"
+  },
+  "km": {
+    "nuevoValor": "New odometer reading",
+    "escribeValor": "Enter the odometer reading",
+    "diferencia": "+{{km}} km since last time",
+    "menorQue": "It cannot be lower than {{km}} km",
+    "anterior": "Previous: {{km}} km",
+    "teclado": "Number pad",
+    "guardar": "Save reading",
+    "borrarDigito": "Delete one digit",
+    "borrarTodo": "Clear all",
+    "errorGuardar": "The reading could not be saved.",
+    "actualizado": "Odometer updated."
+  },
+  "servicioForm": {
+    "tituloNuevo": "New service",
+    "tituloEditar": "Edit service",
+    "pregunta": "What did you do to the bike?",
+    "kilometraje": "Odometer",
+    "fecha": "Date",
+    "costo": "Cost",
+    "notas": "Parts and notes",
+    "opcional": "(optional)",
+    "notasEjemplo": "e.g. 10W-40 synthetic oil, new filter, El Pistón workshop",
+    "guardar": "Save to log",
+    "guardado": "Service saved to the log.",
+    "actualizado": "Service updated.",
+    "errores": {
+      "kmVacio": "Enter the service odometer reading.",
+      "kmNegativo": "The reading cannot be negative.",
+      "fechaVacia": "Pick the date.",
+      "fechaFutura": "The date cannot be in the future.",
+      "costoNegativo": "The cost cannot be negative."
+    }
+  },
+  "tabs": {
+    "inicio": "Home",
+    "bitacora": "Log",
+    "checklist": "Checklist",
+    "navegacion": "Main navigation"
+  },
+  "bitacora": {
+    "subtitulo": "Service history of your {{modelo}}",
+    "buscar": "Search services",
+    "buscarEjemplo": "Search service or workshop",
+    "filtrar": "Filter by category",
+    "todos": "All",
+    "totalInvertido": "Total spent",
+    "invertido": {
+      "uno": "Spent · 1 service",
+      "varios": "Spent · {{n}} services"
+    },
+    "sinCoincidencias": "No services match your search.",
+    "vacio": "No services logged yet.",
+    "vacioAyuda": "Tap the + button to add the first one.",
+    "nuevo": "Log a new service"
+  },
+  "detalle": {
+    "datos": "Service details",
+    "costoTotal": "Total cost",
+    "proximoCambio": "Next service",
+    "intervalo": "Interval",
+    "cada": "Every {{km}} km",
+    "sinNotas": "No extra notes.",
+    "eliminarTitulo": "Delete record",
+    "eliminarMensaje": "\"{{nombre}}\" from {{fecha}} will be deleted. This cannot be undone.",
+    "eliminar": "Delete",
+    "eliminado": "Record deleted.",
+    "noExiste": "This service no longer exists."
+  },
+  "diagnostico": {
+    "noApta": "Not fit to ride",
+    "apta": "Fit to ride",
+    "sinAprobar": {
+      "uno": "1 critical point failed",
+      "varios": "{{n}} critical points failed"
+    },
+    "todosAprobados": "All points passed",
+    "cuando": "{{dia}}, {{hora}}",
+    "totales": "Totals",
+    "aprobados": "Passed",
+    "noAprobado": "Failed",
+    "revisados": "Checked",
+    "resultadoPorPunto": "Result per point",
+    "aprobado": "Passed",
+    "sinRevisar": "Not checked",
+    "queHacer": "What to do · {{punto}}",
+    "ultimoServicio": "Last {{servicio}} service: {{km}} km.",
+    "registrar": "Log {{servicio}}",
+    "volverInicio": "Back to home",
+    "sinInspeccion": "You have not done a pre-ride check yet."
+  },
+  "intervalos": {
+    "titulo": "Service intervals",
+    "porDefecto": "Default values",
+    "intro": "How many km between services. Check your bike's manual.",
+    "avisarme": "Warn me in yellow when I reach…",
+    "cada": "every",
+    "reducir": "Decrease {{nombre}}",
+    "aumentar": "Increase {{nombre}}",
+    "guardar": "Save intervals",
+    "guardados": "Intervals saved. Alerts were recalculated."
+  }
+}

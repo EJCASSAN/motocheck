@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 
+import { t } from '../i18n/idioma';
+
 @Injectable({ providedIn: 'root' })
 export class UiService {
   private toasts = inject(ToastController);
@@ -22,7 +24,7 @@ export class UiService {
       header: titulo,
       message: mensaje,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: t('comun.cancelar'), role: 'cancel' },
         { text: textoAccion, role: 'destructive' },
       ],
     });
