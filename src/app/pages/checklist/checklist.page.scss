@@ -1,0 +1,140 @@
+.mc-page {
+  padding-top: max(24px, env(safe-area-inset-top));
+  gap: 16px;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reiniciar {
+  min-height: 44px;
+  padding: 0 12px;
+  border: none;
+  background: none;
+  color: var(--mc-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.progreso {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .texto {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .pct {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mc-primary);
+  }
+}
+
+.puntos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.punto {
+  min-height: 64px;
+  padding: 10px 10px 10px 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &.falla {
+    background: #1e1416;
+    border-color: #5a2a2f;
+  }
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombre {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.marca {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--mc-border-strong);
+  background: var(--mc-surface-2);
+  color: #7d8794;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+
+  &.ok.on {
+    border-color: var(--mc-success);
+    background: var(--mc-success);
+    color: #06140d;
+  }
+  &.fail.on {
+    border-color: var(--mc-danger);
+    background: var(--mc-danger);
+    color: #1f0507;
+  }
+}
+
+.estado {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--mc-surface);
+  border: 1px solid var(--mc-border);
+  color: var(--mc-muted);
+  font-size: 14px;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  strong {
+    color: var(--mc-text);
+  }
+  &.mal {
+    background: #1e1416;
+    border-color: #5a2a2f;
+    ion-icon {
+      color: var(--mc-danger);
+    }
+  }
+  &.bien {
+    background: var(--mc-success-bg);
+    border-color: #1f4a35;
+    ion-icon {
+      color: var(--mc-success);
+    }
+  }
+}

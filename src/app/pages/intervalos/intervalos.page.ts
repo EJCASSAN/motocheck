@@ -1,91 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
-  IonBackButton,
-  IonItem,
-  IonInput,
-  IonButton,
-  IonIcon,
-  IonRange,
-  IonLabel,
-  IonText,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { saveOutline } from 'ionicons/icons';
-import { StorageService } from '../../services/storage.service';
-import { ConfiguracionIntervalos } from '../../models/motocheck.models';
+import type { OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { IonContent, IonIcon, NavController } from '@ionic/angular';
 
+import {
+  INTERVALOS_DEFAULT,
+  INTERVALO_MINIMO_KM,
+  NOMBRES_SERVICIO,
+  PASO_INTERVALO,
+  TIPOS_PERIODICOS,
+} from '../../models/catalogo';
+import type { ConfiguracionIntervalos, TipoServicioPeriodico, UmbralAviso } from '../../models/motocheck.models';
+import { StorageService } from '../../services/storage.service';
+import { UiService } from '../../services/ui.service';
+import { miles } from '../../utils/formato';
+
+const INTERVALO_MAXIMO_KM = 100_000;
+
+/** Mockup 10 · Intervalos de servicio (RF17). */
 @Component({
   selector: 'app-intervalos',
   templateUrl: './intervalos.page.html',
   styleUrls: ['./intervalos.page.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonBackButton,
-    IonItem,
-    IonInput,
-    IonButton,
-    IonIcon,
-    IonRange,
-    IonLabel,
-    IonText,
-  ],
+  imports: [IonContent, IonIcon],
 })
 export class IntervalosPage implements OnInit {
-  config: ConfiguracionIntervalos = {
-    umbralAmarillo: 80,
-    intervalosKm: {
-      aceite: 3000,
-      cadena: 4500,
-      frenos: 15000,
-      filtros: 6000,
-      bujias: 10000,
-      kit_arrastre: 20000,
-    },
-  };
+  private storage = inject(StorageService);
+  private ui = inject(UiService);
+  private nav = inject(NavController);
 
-  guardado = false;
+  readonly tipos = TIPOS_PERIODICOS;
+  readonly nombres = NOMBRES_SERVICIO;
+  readonly umbrales: UmbralAviso[] = [70, 80, 90];
+  readonly minimo = INTERVALO_MINIMO_KM;
+  readonly miles = miles;
 
-  constructor(private storage: StorageService, private router: Router) {
-    addIcons({ saveOutline });
+  config: ConfiguracionIntervalos = structuredClone(INTERVALOS_DEFAULT);
+
+  ngOnInit(): void {
+    this.config = structuredClone(this.storage.intervalos());
   }
 
-  ngOnInit() {
-    this.storage.intervalos$.subscribe((c) => {
-      this.config = {
-        umbralAmarillo: c.umbralAmarillo,
-        intervalosKm: { ...c.intervalosKm },
-      };
-    });
+  cambiar(tipo: TipoServicioPeriodico, direccion: 1 | -1): void {
+    const nuevo = this.config.intervalosKm[tipo] + direccion * PASO_INTERVALO[tipo];
+    this.config.intervalosKm[tipo] = Math.min(INTERVALO_MAXIMO_KM, Math.max(INTERVALO_MINIMO_KM, nuevo));
   }
 
-  async guardarIntervalos() {
-    await this.storage.guardarIntervalos({
-      umbralAmarillo: Number(this.config.umbralAmarillo) as 70 | 80 | 90,
-      intervalosKm: {
-        aceite: Number(this.config.intervalosKm.aceite),
-        cadena: Number(this.config.intervalosKm.cadena),
-        frenos: Number(this.config.intervalosKm.frenos),
-        filtros: Number(this.config.intervalosKm.filtros),
-        bujias: Number(this.config.intervalosKm.bujias),
-        kit_arrastre: Number(this.config.intervalosKm.kit_arrastre),
-      },
-    });
-    this.guardado = true;
-    setTimeout(() => this.router.navigateByUrl('/tabs/inicio'), 800);
+  restaurar(): void {
+    this.config = structuredClone(INTERVALOS_DEFAULT);
+  }
+
+  volver(): void {
+    this.nav.back();
+  }
+
+  async guardar(): Promise<void> {
+    await this.storage.guardarIntervalos(structuredClone(this.config));
+    await this.ui.aviso('Intervalos guardados. Las alertas se recalcularon.');
+    this.nav.back();
   }
 }

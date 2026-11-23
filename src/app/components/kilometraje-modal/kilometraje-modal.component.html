@@ -1,0 +1,45 @@
+<ion-content>
+  <div class="mc-sheet-header">
+    <button type="button" class="mc-back" (click)="cancelar()">Cancelar</button>
+    <h1 id="km-title">Actualizar kilometraje</h1>
+    <span></span>
+  </div>
+
+  <section class="mc-page" aria-labelledby="km-title">
+    <div class="mc-card display" aria-live="polite">
+      <span class="mc-overline">Nuevo valor del odómetro</span>
+      <div class="valor">
+        <span class="mc-display">{{ valor ? miles(numero) : '0' }}</span>
+        <span class="unidad">km</span>
+      </div>
+      <span class="delta" [class.error]="!valido">
+        @if (valor === '') {
+          Escribe el valor del odómetro
+        } @else if (diferencia >= 0) {
+          +{{ miles(diferencia) }} km desde la última vez
+        } @else {
+          No puede ser menor que {{ miles(anterior) }} km
+        }
+      </span>
+    </div>
+
+    <div class="mc-row-between mc-muted">
+      <span>Anterior: {{ miles(anterior) }} km</span>
+      <span>Actualizado {{ actualizado }}</span>
+    </div>
+
+    <div class="teclado" role="group" aria-label="Teclado numérico">
+      @for (t of teclas; track t) {
+        <button type="button" class="tecla" [attr.aria-label]="etiqueta(t)" (click)="presionar(t)">
+          @if (t === '⌫') {
+            <ion-icon name="backspace-outline" aria-hidden="true"></ion-icon>
+          } @else {
+            {{ t }}
+          }
+        </button>
+      }
+    </div>
+
+    <button type="button" class="mc-btn primary" [disabled]="!valido" (click)="guardar()">Guardar kilometraje</button>
+  </section>
+</ion-content>

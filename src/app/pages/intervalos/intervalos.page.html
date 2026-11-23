@@ -1,61 +1,60 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/ajustes"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Intervalos (km)</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="mc-page">
+    <nav class="mc-row-between" aria-label="Volver">
+      <button type="button" class="mc-back" (click)="volver()">
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+        Ajustes
+      </button>
+      <button type="button" class="mc-back restaurar" (click)="restaurar()">Valores por defecto</button>
+    </nav>
 
-<ion-content class="ion-padding">
-  <p style="margin-top: 0; color: var(--ion-color-medium);">
-    Define cada cuántos kilómetros deseas recibir alertas preventivas.
-  </p>
+    <header>
+      <h1 class="mc-title">Intervalos de servicio</h1>
+      <p class="mc-muted">Cada cuántos kilómetros toca cada mantenimiento. Revisa el manual de tu moto.</p>
+    </header>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Aceite de motor (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.aceite"></ion-input>
-  </ion-item>
+    <section class="aviso">
+      <span id="lbl-aviso" class="etiqueta">Avisarme en amarillo al llegar al…</span>
+      <div class="segmentos" role="radiogroup" aria-labelledby="lbl-aviso">
+        @for (u of umbrales; track u) {
+        <button
+          type="button"
+          role="radio"
+          class="segmento"
+          [class.on]="config.umbralAmarillo === u"
+          [attr.aria-checked]="config.umbralAmarillo === u"
+          (click)="config.umbralAmarillo = u"
+        >
+          {{ u }}%
+        </button>
+        }
+      </div>
+    </section>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Tensión de cadena (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.cadena"></ion-input>
-  </ion-item>
+    <ul class="mc-card lista">
+      @for (t of tipos; track t) {
+      <li>
+        <div class="nombre">
+          <span>{{ nombres[t] }}</span>
+          <small class="mc-muted">cada</small>
+        </div>
+        <button
+          type="button"
+          class="paso"
+          [attr.aria-label]="'Reducir ' + nombres[t]"
+          [disabled]="config.intervalosKm[t] <= minimo"
+          (click)="cambiar(t, -1)"
+        >
+          −
+        </button>
+        <span class="valor mc-display">{{ miles(config.intervalosKm[t]) }} km</span>
+        <button type="button" class="paso" [attr.aria-label]="'Aumentar ' + nombres[t]" (click)="cambiar(t, 1)">
+          +
+        </button>
+      </li>
+      }
+    </ul>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Filtro de aire (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.filtros"></ion-input>
-  </ion-item>
-
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Bujías (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.bujias"></ion-input>
-  </ion-item>
-
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Pastillas de freno (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.frenos"></ion-input>
-  </ion-item>
-
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input label="Kit de arrastre (km)" labelPlacement="stacked" type="number" [(ngModel)]="config.intervalosKm.kit_arrastre"></ion-input>
-  </ion-item>
-
-  <!-- Umbral de alerta amarilla -->
-  <ion-item lines="none" class="ion-margin-vertical">
-    <ion-label>
-      <h2>Alerta preventiva (amarillo): <strong>{{ config.umbralAmarillo }}%</strong></h2>
-      <ion-range
-        min="70"
-        max="90"
-        step="10"
-        color="warning"
-        [(ngModel)]="config.umbralAmarillo">
-      </ion-range>
-    </ion-label>
-  </ion-item>
-
-  <ion-text color="success" *ngIf="guardado">
-    <p style="text-align: center; font-weight: 600;">¡Intervalos guardados!</p>
-  </ion-text>
-
-  <ion-button expand="block" color="warning" (click)="guardarIntervalos()">
-    <ion-icon slot="start" name="save-outline"></ion-icon>
-    Guardar intervalos
-  </ion-button>
+    <button type="button" class="mc-btn primary" (click)="guardar()">Guardar intervalos</button>
+  </div>
 </ion-content>

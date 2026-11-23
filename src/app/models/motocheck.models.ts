@@ -1,26 +1,25 @@
-export type TipoMantenimiento =
-  | 'aceite'
-  | 'cadena'
-  | 'frenos'
-  | 'filtros'
-  | 'bujias'
-  | 'kit_arrastre'
-  | 'otro';
+/** Mantenimientos con intervalo en km (se calculan alertas para ellos). */
+export type TipoServicioPeriodico = 'aceite' | 'cadena' | 'frenos' | 'filtros' | 'bujias' | 'kit_arrastre';
+
+export type TipoMantenimiento = TipoServicioPeriodico | 'otro';
 
 export type EstadoAlerta = 'optimo' | 'proximo' | 'vencido';
+
+export type UmbralAviso = 70 | 80 | 90;
 
 export interface PerfilMoto {
   marca: string;
   modelo: string;
   cilindraje: number;
   placa: string;
+  kilometrajeInicial: number;
   kilometrajeActual: number;
   ultimaActualizacionKm: string; // ISO date
 }
 
 export interface RegistroMantenimiento {
   id: string;
-  fecha: string; // ISO date
+  fecha: string; // YYYY-MM-DD
   kilometraje: number;
   tipo: TipoMantenimiento;
   costo: number;
@@ -28,19 +27,18 @@ export interface RegistroMantenimiento {
 }
 
 export interface ConfiguracionIntervalos {
-  umbralAmarillo: 70 | 80 | 90; // Porcentaje de aviso
-  intervalosKm: {
-    aceite: number;
-    cadena: number;
-    frenos: number;
-    filtros: number;
-    bujias: number;
-    kit_arrastre: number;
-  };
+  umbralAmarillo: UmbralAviso;
+  intervalosKm: Record<TipoServicioPeriodico, number>;
+}
+
+export interface Preferencias {
+  avisosActivos: boolean;
+  respaldoAutomatico: boolean;
+  ultimoRespaldo: string | null; // ISO date
 }
 
 export interface AlertaMantenimiento {
-  tipo: keyof ConfiguracionIntervalos['intervalosKm'];
+  tipo: TipoServicioPeriodico;
   nombre: string;
   kmRecorridos: number;
   intervaloKm: number;
@@ -49,15 +47,31 @@ export interface AlertaMantenimiento {
   estado: EstadoAlerta;
 }
 
+export type PuntoChecklist = 'llantas' | 'aceite' | 'cadena' | 'frenos' | 'luces';
+
+export type ResultadoPunto = 'aprobado' | 'no_aprobado' | null;
+
 export interface ItemChecklist {
-  id: string;
+  id: PuntoChecklist;
   nombre: string;
-  descripcion: string;
-  estado: 'pendiente' | 'aprobado' | 'no_aprobado';
+  ayuda: string;
+  icono: string;
+  /** Qué hacer si el punto no se aprueba. */
+  recomendacion: string;
+  /** Servicio de la bitácora que corrige la falla. */
+  servicioRelacionado: TipoMantenimiento;
+}
+
+export interface Inspeccion {
+  fecha: string; // ISO date
+  resultados: Record<PuntoChecklist, ResultadoPunto>;
 }
 
 export interface RespaldoMotoCheck {
+  version: 1;
   perfil: PerfilMoto | null;
   mantenimientos: RegistroMantenimiento[];
   intervalos: ConfiguracionIntervalos;
+  preferencias?: Preferencias;
+  ultimaInspeccion?: Inspeccion | null;
 }

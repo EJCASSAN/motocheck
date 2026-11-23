@@ -1,84 +1,85 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/inicio"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Ajustes</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="mc-page">
+    <nav aria-label="Volver">
+      <button type="button" class="mc-back" (click)="volver()">
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+        Volver
+      </button>
+    </nav>
 
-<ion-content class="ion-padding">
-  <!-- Mensaje de confirmación -->
-  <ion-text color="success" *ngIf="mensajeEstado">
-    <p style="font-weight: 600;">{{ mensajeEstado }}</p>
-  </ion-text>
+    <h1 class="mc-title">Ajustes</h1>
 
-  <!-- Editar Perfil de Moto -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Perfil de la motocicleta</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item fill="outline" class="ion-margin-bottom">
-          <ion-input label="Marca" labelPlacement="stacked" [(ngModel)]="marca"></ion-input>
-        </ion-item>
-        <ion-item fill="outline" class="ion-margin-bottom">
-          <ion-input label="Modelo" labelPlacement="stacked" [(ngModel)]="modelo"></ion-input>
-        </ion-item>
-        <ion-item fill="outline" class="ion-margin-bottom">
-          <ion-input label="Cilindraje (cc)" labelPlacement="stacked" type="number" [(ngModel)]="cilindraje"></ion-input>
-        </ion-item>
-        <ion-item fill="outline" class="ion-margin-bottom">
-          <ion-input label="Placa" labelPlacement="stacked" [(ngModel)]="placa"></ion-input>
-        </ion-item>
-      </ion-list>
-
-      <ion-button expand="block" color="warning" (click)="guardarPerfil()">
-        <ion-icon slot="start" name="save-outline"></ion-icon>
-        Guardar cambios
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Acceso a Intervalos -->
-  <ion-button expand="block" fill="outline" color="warning" class="ion-margin-vertical" (click)="irAIntervalos()">
-    <ion-icon slot="start" name="options-outline"></ion-icon>
-    Configurar intervalos de mantenimiento
-  </ion-button>
-
-  <!-- Copia de Seguridad Offline (JSON) -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Respaldo local (JSON)</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item fill="outline" class="ion-margin-bottom">
-        <ion-textarea
-          label="Datos JSON"
-          labelPlacement="stacked"
-          rows="4"
-          placeholder="Aquí aparecerá tu respaldo o pega uno para restaurar"
-          [(ngModel)]="respaldoJson">
-        </ion-textarea>
-      </ion-item>
-
-      <div style="display: flex; gap: 8px;">
-        <ion-button expand="block" style="flex: 1;" color="medium" (click)="exportarRespaldo()">
-          <ion-icon slot="start" name="download-outline"></ion-icon>
-          Exportar
-        </ion-button>
-        <ion-button expand="block" style="flex: 1;" color="success" (click)="importarRespaldo()">
-          <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-          Importar
-        </ion-button>
+    @if (perfil(); as p) {
+    <a class="mc-card moto" routerLink="/editar-moto">
+      <div class="mc-tile-icon"><ion-icon name="bicycle-outline" aria-hidden="true"></ion-icon></div>
+      <div class="texto">
+        <span class="titulo">{{ p.marca }} {{ p.modelo }}</span>
+        <span class="mc-muted"
+          >{{ p.cilindraje }} cc · {{ formatoPlaca(p.placa) }} · desde {{ miles(p.kilometrajeInicial) }} km</span
+        >
       </div>
-    </ion-card-content>
-  </ion-card>
+      <span class="editar">Editar</span>
+    </a>
+    }
 
-  <!-- Restablecer app -->
-  <ion-button expand="block" color="danger" fill="outline" class="ion-margin-top" (click)="borrarTodo()">
-    <ion-icon slot="start" name="trash-outline"></ion-icon>
-    Borrar todos los datos y reiniciar
-  </ion-button>
+    <section class="grupo">
+      <h2 class="mc-overline">Mantenimiento</h2>
+      <div class="mc-card lista">
+        <a class="fila" routerLink="/intervalos">
+          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+          <span class="etiqueta">Intervalos de servicio</span>
+          <ion-icon name="chevron-forward-outline" class="flecha" aria-hidden="true"></ion-icon>
+        </a>
+        <div class="fila">
+          <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+          <ion-toggle
+            class="etiqueta"
+            justify="space-between"
+            [checked]="preferencias().avisosActivos"
+            (ionChange)="cambiarAvisos($event)"
+          >
+            Avisos de mantenimiento
+          </ion-toggle>
+        </div>
+      </div>
+    </section>
+
+    <section class="grupo">
+      <h2 class="mc-overline">Datos y respaldo</h2>
+      <div class="mc-card lista">
+        <button type="button" class="fila" (click)="exportar()">
+          <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+          <span class="etiqueta">
+            Exportar respaldo (.json)
+            <small>Último: {{ ultimoRespaldo() }}</small>
+          </span>
+        </button>
+        <button type="button" class="fila" (click)="elegirArchivo()">
+          <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+          <span class="etiqueta">Importar respaldo</span>
+        </button>
+        <input #archivo type="file" accept=".json,application/json" hidden (change)="importar($event)" />
+        <div class="fila">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+          <ion-toggle
+            class="etiqueta"
+            justify="space-between"
+            [checked]="preferencias().respaldoAutomatico"
+            (ionChange)="cambiarRespaldoAutomatico($event)"
+          >
+            Respaldo automático semanal
+            <small class="pendiente">Próximamente</small>
+          </ion-toggle>
+        </div>
+      </div>
+      <span class="mc-muted nota">
+        <ion-icon name="phone-portrait-outline" aria-hidden="true"></ion-icon>
+        Todo se guarda en este teléfono · {{ espacio() }} KB usados
+      </span>
+    </section>
+
+    <button type="button" class="mc-btn danger" (click)="borrarTodo()">Borrar todos los datos</button>
+
+    <p class="version mc-muted">MotoCheck 1.0 · Funciona 100% sin conexión</p>
+  </div>
 </ion-content>

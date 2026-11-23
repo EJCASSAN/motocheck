@@ -1,89 +1,73 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
-  IonBackButton,
-  IonAccordionGroup,
-  IonAccordion,
-  IonItem,
-  IonLabel,
-  IonBadge,
-} from '@ionic/angular';
+import { Component, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent, IonIcon, NavController } from '@ionic/angular';
 
-interface FallaComun {
-  id: string;
-  sintoma: string;
-  gravedad: 'Alta' | 'Media' | 'Baja';
-  causas: string;
-  accion: string;
+import { CHECKLIST, NOMBRES_SERVICIO } from '../../models/catalogo';
+import type { ItemChecklist } from '../../models/motocheck.models';
+import { ModalesService } from '../../services/modales.service';
+import { StorageService } from '../../services/storage.service';
+import { haceCuanto, miles } from '../../utils/formato';
+
+interface Falla {
+  item: ItemChecklist;
+  ultimoServicio: string;
 }
 
+/** Mockup 8 · Resumen de diagnóstico (RF15) a partir de la última inspección guardada (RF16). */
 @Component({
   selector: 'app-diagnostico',
   templateUrl: './diagnostico.page.html',
   styleUrls: ['./diagnostico.page.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonBackButton,
-    IonAccordionGroup,
-    IonAccordion,
-    IonItem,
-    IonLabel,
-    IonBadge,
-  ],
+  imports: [IonContent, IonIcon],
 })
 export class DiagnosticoPage {
-  fallas: FallaComun[] = [
-    {
-      id: 'encendido',
-      sintoma: 'La moto no enciende (no da arranque)',
-      gravedad: 'Alta',
-      causas: 'Batería descargada, interruptor de corte (run/off) activado, fusible quemado o bujía en mal estado.',
-      accion: 'Verifica el botón rojo de apagado, revisa si encienden las luces del tablero y comprueba los bornes de la batería.',
-    },
-    {
-      id: 'frenos',
-      sintoma: 'Chirrido o pérdida de fuerza al frenar',
-      gravedad: 'Alta',
-      causas: 'Pastillas de freno desgastadas, disco cristalizado o nivel bajo de líquido de frenos.',
-      accion: 'Inspecciona el grosor de las pastillas inmediatamente y no ruedes a alta velocidad hasta reemplazarlas.',
-    },
-    {
-      id: 'cadena',
-      sintoma: 'Golpeteo metálico en la rueda trasera',
-      gravedad: 'Media',
-      causas: 'Cadena destensionada, falta de lubricación o dientes del piñón/catalina desgastados.',
-      accion: 'Limpia, lubrica y tensiona la cadena dejando entre 2 y 3 cm de juego libre.',
-    },
-    {
-      id: 'temperatura',
-      sintoma: 'Sobrecalentamiento del motor',
-      gravedad: 'Alta',
-      causas: 'Nivel bajo de aceite o refrigerante, ventilador bloqueado o manguera con fuga.',
-      accion: 'Detén la moto en un lugar seguro, deja enfriar el motor y revisa niveles antes de continuar.',
-    },
-    {
-      id: 'vibracion',
-      sintoma: 'Vibración excesiva en el manillar',
-      gravedad: 'Media',
-      causas: 'Presión incorrecta en llanta delantera, rin golpeado o rodamientos de dirección flojos.',
-      accion: 'Calibra la presión de aire según el manual del fabricante y revisa visualmente la llanta.',
-    },
-  ];
+  private storage = inject(StorageService);
+  private modales = inject(ModalesService);
+  private nav = inject(NavController);
+  private router = inject(Router);
 
-  colorGravedad(gravedad: FallaComun['gravedad']): string {
-    if (gravedad === 'Alta') return 'danger';
-    if (gravedad === 'Media') return 'warning';
-    return 'success';
+  readonly nombresServicio = NOMBRES_SERVICIO;
+  readonly inspeccion = this.storage.ultimaInspeccion;
+
+  readonly puntos = computed(() => {
+    const r = this.inspeccion()?.resultados;
+    return CHECKLIST.map((item) => ({ item, resultado: r?.[item.id] ?? null }));
+  });
+  readonly aprobados = computed(() => this.puntos().filter((p) => p.resultado === 'aprobado').length);
+  readonly revisados = computed(() => this.puntos().filter((p) => p.resultado !== null).length);
+
+  readonly fallas = computed<Falla[]>(() =>
+    this.puntos()
+      .filter((p) => p.resultado === 'no_aprobado')
+      .map(({ item }) => {
+        const ultimo = this.storage.mantenimientos().find((m) => m.tipo === item.servicioRelacionado);
+        return {
+          item,
+          ultimoServicio:
+            item.servicioRelacionado !== 'otro' && ultimo
+              ? `Último servicio de ${NOMBRES_SERVICIO[item.servicioRelacionado].toLowerCase()}: ${miles(ultimo.kilometraje)} km.`
+              : '',
+        };
+      }),
+  );
+
+  readonly cuando = computed(() => {
+    const i = this.inspeccion();
+    if (!i) return '';
+    const hora = new Date(i.fecha).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' });
+    const dia = haceCuanto(i.fecha);
+    return `${dia[0].toUpperCase()}${dia.slice(1)}, ${hora}`;
+  });
+
+  volver(): void {
+    this.nav.back();
+  }
+
+  registrarArreglo(f: Falla): void {
+    void this.modales.nuevoServicio(f.item.servicioRelacionado);
+  }
+
+  irAInicio(): void {
+    void this.router.navigateByUrl('/tabs/inicio');
   }
 }

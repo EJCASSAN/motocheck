@@ -1,0 +1,105 @@
+<ion-content>
+  <div class="mc-sheet-header">
+    <button type="button" class="mc-back" (click)="cancelar()">Cancelar</button>
+    <h1 id="servicio-title">{{ registro ? 'Editar servicio' : 'Nuevo servicio' }}</h1>
+    <span></span>
+  </div>
+
+  <form class="mc-page" (ngSubmit)="guardar()" aria-labelledby="servicio-title" novalidate>
+    <fieldset class="categorias">
+      <legend>¿Qué le hiciste a la moto?</legend>
+      <div class="grid">
+        @for (c of categorias; track c.id) {
+          <button
+            type="button"
+            class="categoria"
+            [class.active]="tipo === c.id"
+            [attr.aria-pressed]="tipo === c.id"
+            (click)="tipo = c.id"
+          >
+            <ion-icon [name]="c.icono" aria-hidden="true"></ion-icon>
+            {{ c.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <div class="mc-grid-2">
+      <div class="mc-field">
+        <label for="srv-km">Kilometraje</label>
+        <div class="mc-input-wrap has-suffix">
+          <input
+            id="srv-km"
+            name="km"
+            class="mc-input"
+            type="number"
+            inputmode="numeric"
+            min="0"
+            [class.invalid]="intentoGuardar && errorKm"
+            [(ngModel)]="kilometraje"
+          />
+          <span class="mc-suffix">km</span>
+        </div>
+        @if (intentoGuardar && errorKm) {
+          <span class="mc-error">{{ errorKm }}</span>
+        }
+      </div>
+
+      <div class="mc-field">
+        <label for="srv-fecha">Fecha</label>
+        <input
+          id="srv-fecha"
+          name="fecha"
+          class="mc-input"
+          type="date"
+          [max]="hoy"
+          [class.invalid]="intentoGuardar && errorFecha"
+          [(ngModel)]="fecha"
+        />
+        @if (intentoGuardar && errorFecha) {
+          <span class="mc-error">{{ errorFecha }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="mc-field">
+      <label for="srv-costo">Costo</label>
+      <div class="mc-input-wrap has-prefix has-suffix">
+        <span class="mc-prefix">$</span>
+        <input
+          id="srv-costo"
+          name="costo"
+          class="mc-input"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          placeholder="85000"
+          [class.invalid]="intentoGuardar && errorCosto"
+          [(ngModel)]="costo"
+        />
+        <span class="mc-suffix">COP</span>
+      </div>
+      @if (intentoGuardar && errorCosto) {
+        <span class="mc-error">{{ errorCosto }}</span>
+      }
+    </div>
+
+    <div class="mc-field">
+      <label for="srv-notas">Insumos y notas <span class="mc-muted">(opcional)</span></label>
+      <textarea
+        id="srv-notas"
+        name="notas"
+        class="mc-input"
+        rows="3"
+        maxlength="500"
+        placeholder="Ej. Aceite 10W-40 sintético, filtro nuevo, taller El Pistón"
+        [(ngModel)]="notas"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="mc-btn primary" [disabled]="guardando">
+      <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+      {{ registro ? 'Guardar cambios' : 'Guardar en bitácora' }}
+    </button>
+  </form>
+</ion-content>

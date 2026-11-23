@@ -1,139 +1,110 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
-  IonBackButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonButton,
-  IonIcon,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonTextarea,
-  IonText,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import {
-  optionsOutline,
-  saveOutline,
-  downloadOutline,
-  cloudUploadOutline,
-  trashOutline,
-} from 'ionicons/icons';
-import { StorageService } from '../../services/storage.service';
-import { PerfilMoto } from '../../models/motocheck.models';
+import type { ElementRef } from '@angular/core';
+import { Component, computed, inject, viewChild } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { IonContent, IonIcon, IonToggle, NavController } from '@ionic/angular';
 
+import { AvisosService } from '../../services/avisos.service';
+import { RespaldoService } from '../../services/respaldo.service';
+import { StorageService } from '../../services/storage.service';
+import { UiService } from '../../services/ui.service';
+import { fechaLocal, formatoPlaca, miles } from '../../utils/formato';
+
+/** Mockup 9 · Ajustes y perfil (RF03 acceso, RF07 avisos, RF18-RF21 datos). */
 @Component({
   selector: 'app-ajustes',
   templateUrl: './ajustes.page.html',
   styleUrls: ['./ajustes.page.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonButtons,
-    IonBackButton,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonButton,
-    IonIcon,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonTextarea,
-    IonText,
-  ],
+  imports: [IonContent, IonIcon, IonToggle, RouterLink],
 })
-export class AjustesPage implements OnInit {
-  marca = '';
-  modelo = '';
-  cilindraje: number | null = null;
-  placa = '';
-  kilometrajeActual: number | null = null;
+export class AjustesPage {
+  private storage = inject(StorageService);
+  private respaldo = inject(RespaldoService);
+  private avisos = inject(AvisosService);
+  private ui = inject(UiService);
+  private nav = inject(NavController);
+  private router = inject(Router);
 
-  respaldoJson = '';
-  mensajeEstado = '';
+  private readonly archivo = viewChild.required<ElementRef<HTMLInputElement>>('archivo');
 
-  constructor(private storage: StorageService, private router: Router) {
-    addIcons({
-      optionsOutline,
-      saveOutline,
-      downloadOutline,
-      cloudUploadOutline,
-      trashOutline,
-    });
+  readonly miles = miles;
+  readonly formatoPlaca = formatoPlaca;
+  readonly perfil = this.storage.perfil;
+  readonly preferencias = this.storage.preferencias;
+
+  readonly ultimoRespaldo = computed(() => {
+    const f = this.preferencias().ultimoRespaldo;
+    return f ? fechaLocal(f).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'nunca';
+  });
+
+  readonly espacio = computed(() => {
+    // Se recalcula cuando cambian los datos.
+    this.storage.mantenimientos();
+    this.perfil();
+    return Math.max(1, Math.round(this.storage.tamanoDatos() / 1024));
+  });
+
+  volver(): void {
+    this.nav.back();
   }
 
-  ngOnInit() {
-    this.storage.perfil$.subscribe((p) => {
-      if (p) {
-        this.marca = p.marca;
-        this.modelo = p.modelo;
-        this.cilindraje = p.cilindraje;
-        this.placa = p.placa;
-        this.kilometrajeActual = p.kilometrajeActual;
-      }
-    });
-  }
-
-  async guardarPerfil() {
-    if (!this.marca.trim() || !this.modelo.trim() || !this.cilindraje || !this.placa.trim()) {
-      this.mensajeEstado = 'Completa todos los campos del perfil.';
-      return;
+  async cambiarAvisos(evento: CustomEvent<{ checked: boolean }>): Promise<void> {
+    const activar = evento.detail.checked;
+    if (activar && !(await this.avisos.solicitarPermiso())) {
+      await this.ui.aviso('Activa las notificaciones de MotoCheck en los ajustes del teléfono.', 'warning');
     }
-
-    const actualizado: PerfilMoto = {
-      marca: this.marca.trim(),
-      modelo: this.modelo.trim(),
-      cilindraje: Number(this.cilindraje),
-      placa: this.placa.trim().toUpperCase(),
-      kilometrajeActual: Number(this.kilometrajeActual || 0),
-      ultimaActualizacionKm: new Date().toISOString(),
-    };
-
-    await this.storage.guardarPerfil(actualizado);
-    this.mensajeEstado = 'Perfil actualizado correctamente.';
+    await this.storage.guardarPreferencias({ avisosActivos: activar });
+    await this.ui.aviso(activar ? 'Avisos activados.' : 'Avisos desactivados.');
   }
 
-  irAIntervalos() {
-    this.router.navigateByUrl('/intervalos');
+  async cambiarRespaldoAutomatico(evento: CustomEvent<{ checked: boolean }>): Promise<void> {
+    // RF21 pendiente: por ahora solo se guarda la preferencia.
+    await this.storage.guardarPreferencias({ respaldoAutomatico: evento.detail.checked });
+    await this.ui.aviso('El respaldo automático estará disponible en la versión final.', 'warning');
   }
 
-  exportarRespaldo() {
-    this.respaldoJson = this.storage.exportarRespaldoJSON();
-    this.mensajeEstado = 'Respaldo generado. Puedes copiar el texto JSON.';
-  }
-
-  async importarRespaldo() {
-    if (!this.respaldoJson.trim()) {
-      this.mensajeEstado = 'Pega primero un JSON de respaldo válido.';
-      return;
+  async exportar(): Promise<void> {
+    try {
+      await this.respaldo.exportar();
+      await this.ui.aviso('Respaldo exportado.');
+    } catch {
+      // El usuario cerró el menú de compartir o falló la escritura.
+      await this.ui.aviso('No se exportó el respaldo.', 'warning');
     }
-    const ok = await this.storage.importarRespaldoJSON(this.respaldoJson);
-    this.mensajeEstado = ok
-      ? 'Respaldo restaurado correctamente.'
-      : 'Error: el formato JSON no es válido.';
   }
 
-  async borrarTodo() {
+  elegirArchivo(): void {
+    this.archivo().nativeElement.click();
+  }
+
+  async importar(evento: Event): Promise<void> {
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    input.value = '';
+    if (!archivo) return;
+
+    const ok = await this.ui.confirmar(
+      'Importar respaldo',
+      'Los datos actuales se reemplazarán por los del archivo.',
+      'Importar',
+    );
+    if (!ok) return;
+
+    const valido = await this.respaldo.importar(archivo);
+    await this.ui.aviso(
+      valido ? 'Respaldo restaurado correctamente.' : 'El archivo no es un respaldo válido de MotoCheck.',
+      valido ? 'success' : 'danger',
+    );
+  }
+
+  async borrarTodo(): Promise<void> {
+    const ok = await this.ui.confirmar(
+      'Borrar todos los datos',
+      'Se eliminarán la moto, la bitácora y los ajustes de este teléfono. Exporta un respaldo antes si lo necesitas.',
+      'Borrar todo',
+    );
+    if (!ok) return;
     await this.storage.borrarTodosLosDatos();
-    this.router.navigateByUrl('/registro', { replaceUrl: true });
+    await this.ui.aviso('Datos borrados.');
+    await this.router.navigateByUrl('/registro', { replaceUrl: true });
   }
 }

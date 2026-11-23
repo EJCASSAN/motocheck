@@ -1,0 +1,82 @@
+<ion-content>
+  @if (perfil(); as p) {
+  <div class="mc-page">
+    <header class="mc-row-between">
+      <div class="moto">
+        <span class="mc-muted">Mi moto</span>
+        <div class="nombre">
+          <h1 class="mc-title">{{ p.marca }} {{ p.modelo }}</h1>
+          <span class="placa mc-display">{{ formatoPlaca(p.placa) }}</span>
+        </div>
+      </div>
+      <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+        <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+      </a>
+    </header>
+
+    <section class="mc-card odometro" aria-label="Odómetro">
+      <div class="mc-row-between">
+        <span class="mc-overline">Odómetro actual</span>
+        <span class="mc-muted">Actualizado {{ actualizado() }}</span>
+      </div>
+      <button
+        type="button"
+        class="valor"
+        [attr.aria-label]="'Odómetro: ' + miles(p.kilometrajeActual) + ' km. Tocar para actualizar'"
+        (click)="actualizarKm()"
+      >
+        <span class="mc-display">{{ miles(p.kilometrajeActual) }}</span>
+        <span class="unidad">km</span>
+      </button>
+      <button type="button" class="mc-btn primary" (click)="actualizarKm()">
+        <ion-icon name="speedometer-outline" aria-hidden="true"></ion-icon>
+        Actualizar kilometraje
+      </button>
+    </section>
+
+    <section class="resumen" aria-label="Resumen de estados">
+      <div class="mc-card estado-vencido">
+        <span class="mc-display">{{ totales().vencido }}</span>
+        <span>Vencido</span>
+      </div>
+      <div class="mc-card estado-proximo">
+        <span class="mc-display">{{ totales().proximo }}</span>
+        <span>Próximo</span>
+      </div>
+      <div class="mc-card estado-optimo">
+        <span class="mc-display">{{ totales().optimo }}</span>
+        <span>Al día</span>
+      </div>
+    </section>
+
+    <section class="lista">
+      <div class="mc-row-between">
+        <h2 class="mc-section">Mantenimientos</h2>
+        <span class="mc-muted">Toca uno para registrarlo</span>
+      </div>
+
+      @for (a of alertas(); track a.tipo) {
+      <button type="button" class="mc-card item" [class]="'estado-' + a.estado" (click)="registrar(a)">
+        <div class="fila">
+          <div class="mc-tile-icon"><ion-icon [name]="iconos[a.tipo]" aria-hidden="true"></ion-icon></div>
+          <div class="texto">
+            <span class="titulo">{{ a.nombre }}</span>
+            <span class="mc-muted">{{ detalle(a) }}</span>
+          </div>
+          <span class="mc-badge">{{ etiquetaEstado[a.estado] }}</span>
+        </div>
+        <div
+          class="mc-bar"
+          role="progressbar"
+          [attr.aria-valuenow]="a.porcentajeUso"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div [style.width.%]="a.porcentajeUso > 100 ? 100 : a.porcentajeUso"></div>
+        </div>
+      </button>
+      }
+    </section>
+  </div>
+  }
+</ion-content>

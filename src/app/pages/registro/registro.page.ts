@@ -1,90 +1,116 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import type { OnInit } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonItem,
-  IonInput,
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonIcon,
-  IonText,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { speedometerOutline, shieldCheckmarkOutline, arrowForwardOutline } from 'ionicons/icons';
-import { StorageService } from '../../services/storage.service';
-import { PerfilMoto } from '../../models/motocheck.models';
+import { IonContent, IonIcon, NavController } from '@ionic/angular';
 
+import type { PerfilMoto } from '../../models/motocheck.models';
+import { StorageService } from '../../services/storage.service';
+import { UiService } from '../../services/ui.service';
+import { formatoPlaca } from '../../utils/formato';
+
+/** Placa de moto en Colombia: ABC12D (actual) o ABC12 (antigua). */
+const PLACA_REGEX = /^[A-Z]{3}\d{2}[A-Z]?$/;
+
+type Campo = 'marca' | 'modelo' | 'cilindraje' | 'placa' | 'kilometraje';
+
+/**
+ * Mockup 1 · Registro inicial (RF01, RF02).
+ * Con la ruta /editar-moto (data.modo = 'editar') se usa para editar el perfil (RF03).
+ */
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonItem,
-    IonInput,
-    IonButton,
-    IonCard,
-    IonCardContent,
-    IonIcon,
-    IonText,
-  ],
+  imports: [FormsModule, IonContent, IonIcon],
 })
 export class RegistroPage implements OnInit {
+  /** Viene de la configuración de la ruta (withComponentInputBinding). */
+  @Input() modo: 'registro' | 'editar' = 'registro';
+
+  private storage = inject(StorageService);
+  private router = inject(Router);
+  private nav = inject(NavController);
+  private ui = inject(UiService);
+
   marca = '';
   modelo = '';
   cilindraje: number | null = null;
   placa = '';
-  kilometrajeActual: number | null = null;
-  mensajeError = '';
+  kilometraje: number | null = null;
+  intentoGuardar = false;
 
-  constructor(private storage: StorageService, private router: Router) {
-    addIcons({ speedometerOutline, shieldCheckmarkOutline, arrowForwardOutline });
+  get editando(): boolean {
+    return this.modo === 'editar';
   }
 
-  async ngOnInit() {
-    await this.storage.cargarDatosIniciales();
-    this.storage.perfil$.subscribe((perfil) => {
-      if (perfil) {
-        this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true });
-      }
-    });
+  get errores(): Partial<Record<Campo, string>> {
+    const e: Partial<Record<Campo, string>> = {};
+    if (!this.marca.trim()) e.marca = 'Escribe la marca.';
+    if (!this.modelo.trim()) e.modelo = 'Escribe la línea o modelo.';
+    if (!this.cilindraje) e.cilindraje = 'Escribe el cilindraje.';
+    else if (this.cilindraje < 50 || this.cilindraje > 2500) e.cilindraje = 'Entre 50 y 2.500 cc.';
+    if (!this.placa.trim()) e.placa = 'Escribe la placa.';
+    else if (!PLACA_REGEX.test(this.placaNormalizada)) e.placa = 'Formato: ABC12D o ABC12.';
+    if (!this.editando) {
+      if (this.kilometraje === null || `${this.kilometraje}` === '') e.kilometraje = 'Escribe el kilometraje.';
+      else if (this.kilometraje < 0) e.kilometraje = 'No puede ser negativo.';
+    }
+    return e;
   }
 
-  async guardarPerfil() {
-    if (
-      !this.marca.trim() ||
-      !this.modelo.trim() ||
-      !this.cilindraje ||
-      !this.placa.trim() ||
-      this.kilometrajeActual === null ||
-      this.kilometrajeActual < 0
-    ) {
-      this.mensajeError = 'Por favor completa todos los campos de tu moto.';
+  get placaNormalizada(): string {
+    return this.placa.toUpperCase().replace(/[\s-]/g, '');
+  }
+
+  error(campo: Campo): string {
+    return this.intentoGuardar ? (this.errores[campo] ?? '') : '';
+  }
+
+  ngOnInit(): void {
+    const p = this.storage.perfil();
+    if (this.editando && p) {
+      this.marca = p.marca;
+      this.modelo = p.modelo;
+      this.cilindraje = p.cilindraje;
+      this.placa = formatoPlaca(p.placa);
+    }
+  }
+
+  volver(): void {
+    this.nav.back();
+  }
+
+  async guardar(): Promise<void> {
+    this.intentoGuardar = true;
+    if (Object.keys(this.errores).length > 0) {
+      await this.ui.aviso('Revisa los campos marcados en rojo.', 'danger');
       return;
     }
 
-    const nuevoPerfil: PerfilMoto = {
+    const actual = this.storage.perfil();
+    const datos = {
       marca: this.marca.trim(),
       modelo: this.modelo.trim(),
       cilindraje: Number(this.cilindraje),
-      placa: this.placa.trim().toUpperCase(),
-      kilometrajeActual: Number(this.kilometrajeActual),
-      ultimaActualizacionKm: new Date().toISOString(),
+      placa: this.placaNormalizada,
     };
 
-    await this.storage.guardarPerfil(nuevoPerfil);
-    this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true });
+    if (this.editando && actual) {
+      await this.storage.guardarPerfil({ ...actual, ...datos });
+      await this.ui.aviso('Datos de la moto actualizados.');
+      this.nav.back();
+      return;
+    }
+
+    const km = Number(this.kilometraje);
+    const perfil: PerfilMoto = {
+      ...datos,
+      kilometrajeInicial: km,
+      kilometrajeActual: km,
+      ultimaActualizacionKm: new Date().toISOString(),
+    };
+    await this.storage.guardarPerfil(perfil);
+    await this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true });
   }
 }

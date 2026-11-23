@@ -1,0 +1,57 @@
+.display {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.valor {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  .mc-display {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1.5px;
+  }
+  .unidad {
+    font-size: 18px;
+    color: var(--mc-subtle);
+  }
+}
+
+.delta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mc-success);
+
+  &.error {
+    color: #ff8a8a;
+  }
+}
+
+.teclado {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tecla {
+  height: 60px;
+  border-radius: 14px;
+  border: 1px solid var(--mc-border);
+  background: var(--mc-surface);
+  color: var(--mc-text);
+  font-family: var(--mc-font-display);
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:active {
+    background: var(--mc-border);
+  }
+}

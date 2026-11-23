@@ -1,0 +1,75 @@
+.registro {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding-top: max(40px, env(safe-area-inset-top));
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--mc-primary);
+  color: var(--mc-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.intro .mc-title {
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.lead {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mc-muted);
+}
+
+.placa {
+  font-family: var(--mc-font-display);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.odometro {
+  height: 60px;
+  font-family: var(--mc-font-display);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.privacidad {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #15181e;
+  border: 1px solid #23272f;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--mc-success);
+  }
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mc-muted);
+  }
+}
+
+.enviar {
+  margin-top: auto;
+  height: 56px;
+}

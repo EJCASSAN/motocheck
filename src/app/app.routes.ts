@@ -1,44 +1,44 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+
+import { requierePerfil, sinPerfil } from './guards';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'registro',
-    pathMatch: 'full',
-  },
+  { path: '', redirectTo: 'tabs/inicio', pathMatch: 'full' },
   {
     path: 'registro',
-    loadComponent: () =>
-      import('./pages/registro/registro.page').then((m) => m.RegistroPage),
+    canActivate: [sinPerfil],
+    loadComponent: () => import('./pages/registro/registro.page').then((m) => m.RegistroPage),
   },
   {
     path: 'tabs',
+    canActivate: [requierePerfil],
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   },
   {
-    path: 'detalle-servicio/:id',
-    loadComponent: () =>
-      import('./pages/detalle-servicio/detalle-servicio.page').then(
-        (m) => m.DetalleServicioPage
-      ),
+    path: 'servicio/:servicioId',
+    canActivate: [requierePerfil],
+    loadComponent: () => import('./pages/detalle-servicio/detalle-servicio.page').then((m) => m.DetalleServicioPage),
   },
   {
     path: 'diagnostico',
-    loadComponent: () =>
-      import('./pages/diagnostico/diagnostico.page').then(
-        (m) => m.DiagnosticoPage
-      ),
+    canActivate: [requierePerfil],
+    loadComponent: () => import('./pages/diagnostico/diagnostico.page').then((m) => m.DiagnosticoPage),
   },
   {
     path: 'ajustes',
-    loadComponent: () =>
-      import('./pages/ajustes/ajustes.page').then((m) => m.AjustesPage),
+    canActivate: [requierePerfil],
+    loadComponent: () => import('./pages/ajustes/ajustes.page').then((m) => m.AjustesPage),
+  },
+  {
+    path: 'editar-moto',
+    canActivate: [requierePerfil],
+    data: { modo: 'editar' },
+    loadComponent: () => import('./pages/registro/registro.page').then((m) => m.RegistroPage),
   },
   {
     path: 'intervalos',
-    loadComponent: () =>
-      import('./pages/intervalos/intervalos.page').then(
-        (m) => m.IntervalosPage
-      ),
+    canActivate: [requierePerfil],
+    loadComponent: () => import('./pages/intervalos/intervalos.page').then((m) => m.IntervalosPage),
   },
+  { path: '**', redirectTo: 'tabs/inicio' },
 ];

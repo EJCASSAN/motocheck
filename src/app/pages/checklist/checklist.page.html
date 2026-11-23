@@ -1,0 +1,81 @@
+<ion-content>
+  <div class="mc-page">
+    <header class="mc-row-between">
+      <div>
+        <h1 class="mc-title">Pre-ruta</h1>
+        <span class="mc-muted">Revisa {{ items.length }} puntos antes de salir</span>
+      </div>
+      <div class="acciones">
+        <button type="button" class="reiniciar" (click)="reiniciar()">Reiniciar</button>
+        <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+          <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+        </a>
+      </div>
+    </header>
+
+    <section class="mc-card progreso" aria-label="Progreso">
+      <div class="mc-row-between">
+        <span class="texto">{{ revisados() }} de {{ items.length }} revisados</span>
+        <span class="mc-display pct">{{ porcentaje() }}%</span>
+      </div>
+      <div class="mc-bar"><div [style.width.%]="porcentaje()"></div></div>
+    </section>
+
+    <ul class="puntos">
+      @for (it of items; track it.id) {
+      <li class="mc-card punto" [class.falla]="resultados()[it.id] === 'no_aprobado'">
+        <div class="mc-tile-icon"><ion-icon [name]="it.icono" aria-hidden="true"></ion-icon></div>
+        <div class="info">
+          <span class="nombre">{{ it.nombre }}</span>
+          <span class="mc-muted">{{ it.ayuda }}</span>
+        </div>
+        <button
+          type="button"
+          class="marca fail"
+          [class.on]="resultados()[it.id] === 'no_aprobado'"
+          [attr.aria-pressed]="resultados()[it.id] === 'no_aprobado'"
+          [attr.aria-label]="it.nombre + ': no aprobado'"
+          (click)="marcar(it.id, 'no_aprobado')"
+        >
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button
+          type="button"
+          class="marca ok"
+          [class.on]="resultados()[it.id] === 'aprobado'"
+          [attr.aria-pressed]="resultados()[it.id] === 'aprobado'"
+          [attr.aria-label]="it.nombre + ': aprobado'"
+          (click)="marcar(it.id, 'aprobado')"
+        >
+          <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </li>
+      }
+    </ul>
+
+    @if (fallas().length > 0) {
+    <div class="estado mal" role="status">
+      <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+      <div>
+        <strong>No es seguro rodar todavía</strong>
+        <span>Revisa: {{ nombresFallas() }}</span>
+      </div>
+    </div>
+    } @else if (pendientes() === 0) {
+    <div class="estado bien" role="status">
+      <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+      <div>
+        <strong>Lista para rodar</strong>
+        <span>Todos los puntos críticos fueron aprobados.</span>
+      </div>
+    </div>
+    } @else {
+    <div class="estado" role="status">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      <span>Te {{ pendientes() === 1 ? 'falta 1 punto' : 'faltan ' + pendientes() + ' puntos' }} por revisar.</span>
+    </div>
+    }
+
+    <button type="button" class="mc-btn primary" (click)="finalizar()">Finalizar verificación</button>
+  </div>
+</ion-content>

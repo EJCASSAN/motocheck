@@ -1,0 +1,65 @@
+.mc-page {
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mc-tile-icon.grande {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 28px;
+  color: var(--mc-primary);
+  background: #2a1a10;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dato {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.completo {
+    grid-column: 1 / -1;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--mc-border);
+  }
+  .mc-display {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .costo {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  small {
+    font-size: 13px;
+    color: var(--mc-subtle);
+  }
+  .proximo {
+    color: var(--mc-warning);
+  }
+}
+
+.notas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mc-text-2);
+    white-space: pre-line;
+  }
+}

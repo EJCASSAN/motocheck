@@ -1,25 +1,11 @@
-import { Component, EnvironmentInjector, inject } from '@angular/core';
-import {
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
-  IonIcon,
-  IonLabel,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { homeOutline, listOutline, checkboxOutline } from 'ionicons/icons';
+import { Component } from '@angular/core';
+import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 
+/** Barra inferior con las 3 pestañas del mapa de navegación. */
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
-  standalone: true,
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
 })
-export class TabsPage {
-  public environmentInjector = inject(EnvironmentInjector);
-
-  constructor() {
-    addIcons({ homeOutline, listOutline, checkboxOutline });
-  }
-}
+export class TabsPage {}

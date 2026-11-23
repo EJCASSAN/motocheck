@@ -1,0 +1,81 @@
+<ion-content>
+  <div class="mc-page">
+    <header class="mc-row-between">
+      <div>
+        <h1 class="mc-title">Bitácora</h1>
+        <span class="mc-muted">Historial de servicios de tu {{ perfil()?.modelo }}</span>
+      </div>
+      <a class="mc-icon-btn" routerLink="/ajustes" aria-label="Ajustes y perfil">
+        <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+      </a>
+    </header>
+
+    @if (hayRegistros()) {
+    <div class="mc-input-wrap buscar">
+      <ion-icon name="search-outline" class="mc-prefix" aria-hidden="true"></ion-icon>
+      <label for="buscar" class="sr-only">Buscar servicio</label>
+      <input
+        id="buscar"
+        class="mc-input"
+        type="search"
+        placeholder="Buscar servicio o taller"
+        [value]="busqueda()"
+        (input)="buscar($event)"
+      />
+    </div>
+
+    <div class="mc-chips" role="group" aria-label="Filtrar por categoría">
+      @for (c of chips(); track c.id) {
+      <button
+        type="button"
+        class="mc-chip"
+        [class.active]="filtro() === c.id"
+        [attr.aria-pressed]="filtro() === c.id"
+        (click)="elegirFiltro(c.id)"
+      >
+        {{ c.label }}
+      </button>
+      }
+    </div>
+
+    <section class="mc-card total" aria-label="Total invertido">
+      <span class="mc-muted"
+        >Invertido · {{ filtrados().length }} {{ filtrados().length === 1 ? 'servicio' : 'servicios' }}</span
+      >
+      <span class="mc-display">${{ miles(total()) }} <small>COP</small></span>
+    </section>
+
+    @for (g of grupos(); track g.mes) {
+    <section class="grupo">
+      <h2 class="mes">{{ g.mes }}</h2>
+      @for (m of g.items; track m.id) {
+      <a class="mc-card registro" [routerLink]="['/servicio', m.id]">
+        <div class="mc-tile-icon"><ion-icon [name]="iconos[m.tipo]" aria-hidden="true"></ion-icon></div>
+        <div class="texto">
+          <span class="titulo">{{ nombres[m.tipo] }}</span>
+          <span class="mc-muted">{{ diaMes(m.fecha) }} · {{ miles(m.kilometraje) }} km</span>
+        </div>
+        <span class="costo mc-display">${{ miles(m.costo) }}</span>
+        <ion-icon name="chevron-forward-outline" class="flecha" aria-hidden="true"></ion-icon>
+      </a>
+      }
+    </section>
+    } @empty {
+    <div class="mc-empty">
+      <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      <p>No hay servicios que coincidan con la búsqueda.</p>
+    </div>
+    } } @else {
+    <div class="mc-empty">
+      <ion-icon name="construct-outline" aria-hidden="true"></ion-icon>
+      <p>Aún no hay servicios registrados.<br />Toca el botón + para agregar el primero.</p>
+    </div>
+    }
+  </div>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button aria-label="Registrar nuevo servicio" (click)="nuevo()">
+      <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

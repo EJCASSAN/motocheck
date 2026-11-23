@@ -1,29 +1,73 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/inspeccion"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Guía de Diagnóstico</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="mc-page">
+    <nav aria-label="Volver">
+      <button type="button" class="mc-back" (click)="volver()">
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+        Checklist
+      </button>
+    </nav>
 
-<ion-content class="ion-padding">
-  <p style="margin-top: 0; color: var(--ion-color-medium);">
-    Toca un síntoma para ver las causas probables y la acción recomendada (disponible 100% sin internet).
-  </p>
-
-  <ion-accordion-group>
-    <ion-accordion *ngFor="let falla of fallas" [value]="falla.id">
-      <ion-item slot="header" color="light">
-        <ion-label class="ion-text-wrap"><strong>{{ falla.sintoma }}</strong></ion-label>
-        <ion-badge slot="end" [color]="colorGravedad(falla.gravedad)">
-          {{ falla.gravedad }}
-        </ion-badge>
-      </ion-item>
-      <div class="ion-padding" slot="content">
-        <p><strong>Causas probables:</strong> {{ falla.causas }}</p>
-        <p style="margin-bottom: 0;"><strong>Qué hacer:</strong> {{ falla.accion }}</p>
+    @if (inspeccion()) {
+    <header class="resultado" [class.mal]="fallas().length > 0">
+      <div class="icono">
+        <ion-icon
+          [name]="fallas().length > 0 ? 'warning-outline' : 'shield-checkmark-outline'"
+          aria-hidden="true"
+        ></ion-icon>
       </div>
-    </ion-accordion>
-  </ion-accordion-group>
-</ion-content>  
+      <h1 class="mc-title">{{ fallas().length > 0 ? 'No apta para rodar' : 'Apta para rodar' }}</h1>
+      <span class="mc-muted">
+        @if (fallas().length > 0) { {{ fallas().length }} {{ fallas().length === 1 ? 'punto crítico sin aprobar' :
+        'puntos críticos sin aprobar' }} } @else { Todos los puntos aprobados } · {{ cuando() }}
+      </span>
+    </header>
+
+    <section class="totales" aria-label="Totales">
+      <div class="mc-card"><span class="mc-display ok">{{ aprobados() }}</span><span>Aprobados</span></div>
+      <div class="mc-card"><span class="mc-display fail">{{ fallas().length }}</span><span>No aprobado</span></div>
+      <div class="mc-card"><span class="mc-display">{{ revisados() }}</span><span>Revisados</span></div>
+    </section>
+
+    <ul class="mc-card puntos" aria-label="Resultado por punto">
+      @for (p of puntos(); track p.item.id) {
+      <li>
+        <span>{{ p.item.nombre }}</span>
+        <span
+          class="mc-badge"
+          [class.estado-optimo]="p.resultado === 'aprobado'"
+          [class.estado-vencido]="p.resultado === 'no_aprobado'"
+        >
+          {{ p.resultado === 'aprobado' ? 'Aprobado' : p.resultado === 'no_aprobado' ? 'No aprobado' : 'Sin revisar' }}
+        </span>
+      </li>
+      }
+    </ul>
+
+    @for (f of fallas(); track f.item.id; let primero = $first) {
+    <section class="mc-card que-hacer">
+      <div class="titulo">
+        <ion-icon name="build-outline" aria-hidden="true"></ion-icon>
+        Qué hacer · {{ f.item.nombre }}
+      </div>
+      <p>{{ f.item.recomendacion }} {{ f.ultimoServicio }}</p>
+      <button
+        type="button"
+        class="mc-btn"
+        [class.primary]="primero"
+        [class.secondary]="!primero"
+        (click)="registrarArreglo(f)"
+      >
+        Registrar {{ nombresServicio[f.item.servicioRelacionado].toLowerCase() }}
+      </button>
+    </section>
+    }
+
+    <button type="button" class="mc-btn secondary" (click)="irAInicio()">Volver al inicio</button>
+    } @else {
+    <div class="mc-empty">
+      <ion-icon name="clipboard-outline" aria-hidden="true"></ion-icon>
+      <p>Aún no has hecho una verificación pre-ruta.</p>
+    </div>
+    }
+  </div>
+</ion-content>

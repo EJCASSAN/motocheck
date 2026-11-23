@@ -1,58 +1,57 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/servicios"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Detalle de Servicio</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="mc-page">
+    <nav class="mc-row-between" aria-label="Volver">
+      <button type="button" class="mc-back" (click)="volver()">
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+        Bitácora
+      </button>
+      @if (registro()) {
+      <button type="button" class="mc-back" (click)="editar()">Editar</button>
+      }
+    </nav>
 
-<ion-content class="ion-padding" *ngIf="registro">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle>REGISTRO DE BITÁCORA</ion-card-subtitle>
-      <ion-card-title>{{ nombresTipos[registro.tipo] }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item>
-          <ion-icon slot="start" name="calendar-outline" color="warning"></ion-icon>
-          <ion-label>
-            <p>Fecha</p>
-            <h2>{{ registro.fecha }}</h2>
-          </ion-label>
-        </ion-item>
+    @if (registro(); as r) {
+    <header class="cabecera">
+      <div class="mc-tile-icon grande"><ion-icon [name]="iconos[r.tipo]" aria-hidden="true"></ion-icon></div>
+      <h1 class="mc-title">{{ nombres[r.tipo] }}</h1>
+      <span class="mc-muted">{{ fechaLarga() }}</span>
+    </header>
 
-        <ion-item>
-          <ion-icon slot="start" name="speedometer-outline" color="warning"></ion-icon>
-          <ion-label>
-            <p>Kilometraje</p>
-            <h2>{{ registro.kilometraje | number }} km</h2>
-          </ion-label>
-        </ion-item>
+    <section class="mc-card datos" aria-label="Datos del servicio">
+      <div class="dato completo">
+        <span class="mc-muted">Costo total</span>
+        <span class="mc-display costo">${{ miles(r.costo) }} <small>COP</small></span>
+      </div>
+      <div class="dato">
+        <span class="mc-muted">Kilometraje</span>
+        <span class="mc-display">{{ miles(r.kilometraje) }} km</span>
+      </div>
+      @if (intervalo(); as i) {
+      <div class="dato">
+        <span class="mc-muted">Próximo cambio</span>
+        <span class="mc-display proximo">{{ miles(r.kilometraje + i) }} km</span>
+      </div>
+      <div class="dato">
+        <span class="mc-muted">Intervalo</span>
+        <span class="mc-display">Cada {{ miles(i) }} km</span>
+      </div>
+      }
+    </section>
 
-        <ion-item>
-          <ion-icon slot="start" name="cash-outline" color="warning"></ion-icon>
-          <ion-label>
-            <p>Costo total</p>
-            <h2><ion-badge color="warning">${{ registro.costo | number }}</ion-badge></h2>
-          </ion-label>
-        </ion-item>
+    <section class="notas">
+      <h2 class="mc-section">Insumos y notas</h2>
+      <p class="mc-card">{{ r.insumosNotas || 'Sin observaciones adicionales.' }}</p>
+    </section>
 
-        <ion-item lines="none">
-          <ion-label class="ion-text-wrap">
-            <p>Insumos y notas</p>
-            <h2 style="margin-top: 4px;">
-              {{ registro.insumosNotas || 'Sin observaciones adicionales.' }}
-            </h2>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-button expand="block" color="danger" fill="outline" class="ion-margin-top" (click)="eliminarRegistro()">
-    <ion-icon slot="start" name="trash-outline"></ion-icon>
-    Eliminar de la bitácora
-  </ion-button>
+    <button type="button" class="mc-btn danger" (click)="eliminar()">
+      <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+      Eliminar registro
+    </button>
+    } @else {
+    <div class="mc-empty">
+      <ion-icon name="document-outline" aria-hidden="true"></ion-icon>
+      <p>Este servicio ya no existe.</p>
+    </div>
+    }
+  </div>
 </ion-content>

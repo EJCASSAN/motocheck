@@ -1,81 +1,120 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-title>MotoCheck</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <form class="mc-page registro" (ngSubmit)="guardar()" novalidate>
+    @if (editando) {
+    <button type="button" class="mc-back" (click)="volver()">
+      <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+      Ajustes
+    </button>
+    }
 
-<ion-content class="ion-padding">
-  <div style="margin-bottom: 20px;">
-    <h1 style="margin-bottom: 6px; font-weight: 700;">Bienvenido a MotoCheck</h1>
-    <ion-text color="medium">
-      <p style="margin-top: 0;">
-        Registra tu moto una sola vez y te avisaremos cuándo toca cada mantenimiento.
+    <header class="intro">
+      @if (!editando) {
+      <div class="logo" aria-hidden="true">
+        <ion-icon name="speedometer-outline"></ion-icon>
+      </div>
+      }
+      <h1 class="mc-title">{{ editando ? 'Editar mi moto' : 'Bienvenido a MotoCheck' }}</h1>
+      <p class="lead">
+        @if (editando) { Corrige los datos de tu moto. El kilometraje se cambia desde Inicio. } @else { Registra tu moto
+        una sola vez y te avisamos cuándo toca cada mantenimiento. }
       </p>
-    </ion-text>
-  </div>
+    </header>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input
-      label="Marca"
-      labelPlacement="stacked"
-      placeholder="Ej. Yamaha"
-      [(ngModel)]="marca">
-    </ion-input>
-  </ion-item>
+    <div class="mc-grid-2">
+      <div class="mc-field">
+        <label for="marca">Marca</label>
+        <input
+          id="marca"
+          name="marca"
+          class="mc-input"
+          placeholder="Ej. Yamaha"
+          autocomplete="off"
+          [class.invalid]="error('marca')"
+          [(ngModel)]="marca"
+        />
+        @if (error('marca')) { <span class="mc-error">{{ error('marca') }}</span> }
+      </div>
+      <div class="mc-field">
+        <label for="modelo">Línea / modelo</label>
+        <input
+          id="modelo"
+          name="modelo"
+          class="mc-input"
+          placeholder="Ej. MT-03"
+          autocomplete="off"
+          [class.invalid]="error('modelo')"
+          [(ngModel)]="modelo"
+        />
+        @if (error('modelo')) { <span class="mc-error">{{ error('modelo') }}</span> }
+      </div>
+    </div>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input
-      label="Línea / Modelo"
-      labelPlacement="stacked"
-      placeholder="Ej. MT-03"
-      [(ngModel)]="modelo">
-    </ion-input>
-  </ion-item>
+    <div class="mc-grid-2">
+      <div class="mc-field">
+        <label for="cc">Cilindraje</label>
+        <div class="mc-input-wrap has-suffix">
+          <input
+            id="cc"
+            name="cc"
+            class="mc-input"
+            type="number"
+            inputmode="numeric"
+            placeholder="321"
+            [class.invalid]="error('cilindraje')"
+            [(ngModel)]="cilindraje"
+          />
+          <span class="mc-suffix">cc</span>
+        </div>
+        @if (error('cilindraje')) { <span class="mc-error">{{ error('cilindraje') }}</span> }
+      </div>
+      <div class="mc-field">
+        <label for="placa">Placa</label>
+        <input
+          id="placa"
+          name="placa"
+          class="mc-input placa"
+          placeholder="ABC 12D"
+          maxlength="8"
+          autocomplete="off"
+          [class.invalid]="error('placa')"
+          [(ngModel)]="placa"
+        />
+        @if (error('placa')) { <span class="mc-error">{{ error('placa') }}</span> }
+      </div>
+    </div>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input
-      label="Cilindraje (cc)"
-      labelPlacement="stacked"
-      type="number"
-      placeholder="Ej. 321"
-      [(ngModel)]="cilindraje">
-    </ion-input>
-  </ion-item>
+    @if (!editando) {
+    <div class="mc-field">
+      <label for="odo">Kilometraje actual del odómetro</label>
+      <div class="mc-input-wrap has-suffix">
+        <input
+          id="odo"
+          name="odo"
+          class="mc-input odometro"
+          type="number"
+          inputmode="numeric"
+          placeholder="34250"
+          [class.invalid]="error('kilometraje')"
+          [(ngModel)]="kilometraje"
+        />
+        <span class="mc-suffix">km</span>
+      </div>
+      @if (error('kilometraje')) {
+      <span class="mc-error">{{ error('kilometraje') }}</span>
+      } @else {
+      <span class="mc-hint">Será la base para calcular tus alertas de servicio.</span>
+      }
+    </div>
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input
-      label="Placa"
-      labelPlacement="stacked"
-      placeholder="Ej. ABC12D"
-      [(ngModel)]="placa">
-    </ion-input>
-  </ion-item>
+    <div class="privacidad">
+      <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+      <p>Tus datos se guardan solo en este teléfono. Funciona sin internet, incluso en carretera.</p>
+    </div>
+    }
 
-  <ion-item fill="outline" class="ion-margin-bottom">
-    <ion-input
-      label="Kilometraje actual del odómetro (km)"
-      labelPlacement="stacked"
-      type="number"
-      placeholder="Ej. 34250"
-      [(ngModel)]="kilometrajeActual">
-    </ion-input>
-  </ion-item>
-
-  <ion-text color="danger" *ngIf="mensajeError">
-    <p class="ion-padding-start">{{ mensajeError }}</p>
-  </ion-text>
-
-  <ion-card color="light" class="ion-margin-vertical">
-    <ion-card-content style="display: flex; align-items: center; gap: 10px;">
-      <ion-icon name="shield-checkmark-outline" size="large" color="success"></ion-icon>
-      <small>
-        Tus datos se guardan solo en este teléfono. Funciona 100% sin internet, incluso en carretera.
-      </small>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-button expand="block" color="warning" (click)="guardarPerfil()">
-    Comenzar a monitorear
-    <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
-  </ion-button>
+    <button type="submit" class="mc-btn primary enviar">
+      {{ editando ? 'Guardar cambios' : 'Comenzar a monitorear' }}
+      <ion-icon [name]="editando ? 'checkmark-outline' : 'arrow-forward-outline'" aria-hidden="true"></ion-icon>
+    </button>
+  </form>
 </ion-content>
