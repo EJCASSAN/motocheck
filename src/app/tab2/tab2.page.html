@@ -1,15 +1,122 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title> Tab 2 </ion-title>
+    <ion-title>Bitácora de Servicios</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <!-- Filtros por categoría -->
+  <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px;">
+    <ion-chip [color]="filtroTipo === 'todos' ? 'warning' : 'medium'" (click)="filtroTipo = 'todos'">
+      Todos
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'aceite' ? 'warning' : 'medium'" (click)="filtroTipo = 'aceite'">
+      Aceite
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'cadena' ? 'warning' : 'medium'" (click)="filtroTipo = 'cadena'">
+      Cadena
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'frenos' ? 'warning' : 'medium'" (click)="filtroTipo = 'frenos'">
+      Frenos
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'filtros' ? 'warning' : 'medium'" (click)="filtroTipo = 'filtros'">
+      Filtros
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'bujias' ? 'warning' : 'medium'" (click)="filtroTipo = 'bujias'">
+      Bujías
+    </ion-chip>
+    <ion-chip [color]="filtroTipo === 'kit_arrastre' ? 'warning' : 'medium'" (click)="filtroTipo = 'kit_arrastre'">
+      Kit arrastre
+    </ion-chip>
+  </div>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <!-- Resumen de gasto -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0 14px;">
+    <ion-text color="medium">
+      <small>{{ mantenimientosFiltrados.length }} registros</small>
+    </ion-text>
+    <ion-badge color="light" style="padding: 6px 10px;">
+      Total: ${{ totalInvertido | number }}
+    </ion-badge>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="mantenimientosFiltrados.length === 0" style="text-align: center; margin-top: 40px;">
+    <ion-icon name="construct-outline" style="font-size: 48px;" color="medium"></ion-icon>
+    <p><ion-text color="medium">Aún no hay servicios registrados en esta categoría.</ion-text></p>
+  </div>
+
+  <!-- Lista de mantenimientos -->
+  <ion-list *ngIf="mantenimientosFiltrados.length > 0">
+    <ion-item
+      *ngFor="let item of mantenimientosFiltrados"
+      button="true"
+      (click)="verDetalle(item)">
+      <ion-label>
+        <h2><strong>{{ nombresTipos[item.tipo] }}</strong></h2>
+        <p>{{ item.fecha }} • {{ item.kilometraje | number }} km</p>
+        <p *ngIf="item.insumosNotas">{{ item.insumosNotas }}</p>
+      </ion-label>
+      <div slot="end" style="display: flex; align-items: center; gap: 8px;">
+        <ion-badge color="warning">${{ item.costo | number }}</ion-badge>
+        <ion-button fill="clear" color="danger" (click)="eliminar(item.id, $event)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- Botón flotante para agregar -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="warning" (click)="abrirModalNuevo()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- MODAL: Nuevo Servicio -->
+  <ion-modal [isOpen]="modalAbierto" (didDismiss)="modalAbierto = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo servicio</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modalAbierto = false">Cancelar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-select label="Tipo de mantenimiento" labelPlacement="stacked" [(ngModel)]="servicioTipo">
+            <ion-select-option value="aceite">Aceite de motor</ion-select-option>
+            <ion-select-option value="cadena">Tensión de cadena</ion-select-option>
+            <ion-select-option value="frenos">Pastillas de freno</ion-select-option>
+            <ion-select-option value="filtros">Filtro de aire</ion-select-option>
+            <ion-select-option value="bujias">Bujías</ion-select-option>
+            <ion-select-option value="kit_arrastre">Kit de arrastre</ion-select-option>
+            <ion-select-option value="otro">Otro</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Kilometraje (km)" labelPlacement="stacked" type="number" [(ngModel)]="servicioKm"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Fecha" labelPlacement="stacked" type="date" [(ngModel)]="servicioFecha"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Costo (COP)" labelPlacement="stacked" type="number" placeholder="Ej. 90000" [(ngModel)]="servicioCosto"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-textarea label="Insumos y notas" labelPlacement="stacked" rows="3" [(ngModel)]="servicioNotas"></ion-textarea>
+        </ion-item>
+
+        <ion-button expand="block" color="warning" (click)="guardarServicio()">
+          Guardar en bitácora
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

@@ -1,13 +1,84 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>ajustes</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ajustes</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">ajustes</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <!-- Mensaje de confirmación -->
+  <ion-text color="success" *ngIf="mensajeEstado">
+    <p style="font-weight: 600;">{{ mensajeEstado }}</p>
+  </ion-text>
+
+  <!-- Editar Perfil de Moto -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Perfil de la motocicleta</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Marca" labelPlacement="stacked" [(ngModel)]="marca"></ion-input>
+        </ion-item>
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Modelo" labelPlacement="stacked" [(ngModel)]="modelo"></ion-input>
+        </ion-item>
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Cilindraje (cc)" labelPlacement="stacked" type="number" [(ngModel)]="cilindraje"></ion-input>
+        </ion-item>
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <ion-input label="Placa" labelPlacement="stacked" [(ngModel)]="placa"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-button expand="block" color="warning" (click)="guardarPerfil()">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Guardar cambios
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Acceso a Intervalos -->
+  <ion-button expand="block" fill="outline" color="warning" class="ion-margin-vertical" (click)="irAIntervalos()">
+    <ion-icon slot="start" name="options-outline"></ion-icon>
+    Configurar intervalos de mantenimiento
+  </ion-button>
+
+  <!-- Copia de Seguridad Offline (JSON) -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Respaldo local (JSON)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item fill="outline" class="ion-margin-bottom">
+        <ion-textarea
+          label="Datos JSON"
+          labelPlacement="stacked"
+          rows="4"
+          placeholder="Aquí aparecerá tu respaldo o pega uno para restaurar"
+          [(ngModel)]="respaldoJson">
+        </ion-textarea>
+      </ion-item>
+
+      <div style="display: flex; gap: 8px;">
+        <ion-button expand="block" style="flex: 1;" color="medium" (click)="exportarRespaldo()">
+          <ion-icon slot="start" name="download-outline"></ion-icon>
+          Exportar
+        </ion-button>
+        <ion-button expand="block" style="flex: 1;" color="success" (click)="importarRespaldo()">
+          <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+          Importar
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Restablecer app -->
+  <ion-button expand="block" color="danger" fill="outline" class="ion-margin-top" (click)="borrarTodo()">
+    <ion-icon slot="start" name="trash-outline"></ion-icon>
+    Borrar todos los datos y reiniciar
+  </ion-button>
 </ion-content>

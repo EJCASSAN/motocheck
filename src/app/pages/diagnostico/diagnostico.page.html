@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>diagnostico</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inspeccion"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Guía de Diagnóstico</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">diagnostico</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+<ion-content class="ion-padding">
+  <p style="margin-top: 0; color: var(--ion-color-medium);">
+    Toca un síntoma para ver las causas probables y la acción recomendada (disponible 100% sin internet).
+  </p>
+
+  <ion-accordion-group>
+    <ion-accordion *ngFor="let falla of fallas" [value]="falla.id">
+      <ion-item slot="header" color="light">
+        <ion-label class="ion-text-wrap"><strong>{{ falla.sintoma }}</strong></ion-label>
+        <ion-badge slot="end" [color]="colorGravedad(falla.gravedad)">
+          {{ falla.gravedad }}
+        </ion-badge>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p><strong>Causas probables:</strong> {{ falla.causas }}</p>
+        <p style="margin-bottom: 0;"><strong>Qué hacer:</strong> {{ falla.accion }}</p>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>  

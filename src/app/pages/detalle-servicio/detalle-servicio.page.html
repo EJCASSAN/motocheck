@@ -1,13 +1,58 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>detalle-servicio</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/servicios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Servicio</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">detalle-servicio</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding" *ngIf="registro">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>REGISTRO DE BITÁCORA</ion-card-subtitle>
+      <ion-card-title>{{ nombresTipos[registro.tipo] }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+        <ion-item>
+          <ion-icon slot="start" name="calendar-outline" color="warning"></ion-icon>
+          <ion-label>
+            <p>Fecha</p>
+            <h2>{{ registro.fecha }}</h2>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="speedometer-outline" color="warning"></ion-icon>
+          <ion-label>
+            <p>Kilometraje</p>
+            <h2>{{ registro.kilometraje | number }} km</h2>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="cash-outline" color="warning"></ion-icon>
+          <ion-label>
+            <p>Costo total</p>
+            <h2><ion-badge color="warning">${{ registro.costo | number }}</ion-badge></h2>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label class="ion-text-wrap">
+            <p>Insumos y notas</p>
+            <h2 style="margin-top: 4px;">
+              {{ registro.insumosNotas || 'Sin observaciones adicionales.' }}
+            </h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="danger" fill="outline" class="ion-margin-top" (click)="eliminarRegistro()">
+    <ion-icon slot="start" name="trash-outline"></ion-icon>
+    Eliminar de la bitácora
+  </ion-button>
 </ion-content>
