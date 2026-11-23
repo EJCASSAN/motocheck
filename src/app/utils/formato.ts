@@ -25,9 +25,14 @@ export function fechaLocal(fecha: string): Date {
   return new Date(y, m - 1, d);
 }
 
-/** "Octubre 2026" */
+function esFechaValida(d: Date): boolean {
+  return !Number.isNaN(d.getTime());
+}
+
+/** "Octubre 2026" ("Sin fecha" si el registro no tiene una fecha válida) */
 export function mesAnio(fecha: string): string {
   const d = fechaLocal(fecha);
+  if (!esFechaValida(d)) return 'Sin fecha';
   const mes = MESES[d.getMonth()];
   return `${mes[0].toUpperCase()}${mes.slice(1)} ${d.getFullYear()}`;
 }
@@ -35,6 +40,7 @@ export function mesAnio(fecha: string): string {
 /** "15 oct" */
 export function diaMesCorto(fecha: string): string {
   const d = fechaLocal(fecha);
+  if (!esFechaValida(d)) return 'Sin fecha';
   return `${d.getDate()} ${MESES[d.getMonth()].slice(0, 3)}`;
 }
 

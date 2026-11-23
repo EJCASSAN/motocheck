@@ -9,6 +9,9 @@ import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { formatoPlaca } from '../../utils/formato';
 
+/** Igual al límite de textos del respaldo, para que todo lo que se guarda se pueda importar. */
+const MAX_TEXTO = 50;
+
 /** Placa de moto en Colombia: ABC12D (actual) o ABC12 (antigua). */
 const PLACA_REGEX = /^[A-Z]{3}\d{2}[A-Z]?$/;
 
@@ -47,7 +50,9 @@ export class RegistroPage implements OnInit {
   get errores(): Partial<Record<Campo, string>> {
     const e: Partial<Record<Campo, string>> = {};
     if (!this.marca.trim()) e.marca = 'Escribe la marca.';
+    else if (this.marca.trim().length > MAX_TEXTO) e.marca = 'Máximo 50 caracteres.';
     if (!this.modelo.trim()) e.modelo = 'Escribe la línea o modelo.';
+    else if (this.modelo.trim().length > MAX_TEXTO) e.modelo = 'Máximo 50 caracteres.';
     if (!this.cilindraje) e.cilindraje = 'Escribe el cilindraje.';
     else if (this.cilindraje < 50 || this.cilindraje > 2500) e.cilindraje = 'Entre 50 y 2.500 cc.';
     if (!this.placa.trim()) e.placa = 'Escribe la placa.';

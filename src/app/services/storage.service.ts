@@ -13,6 +13,10 @@ import type {
   RespaldoMotoCheck,
 } from '../models/motocheck.models';
 
+import { repararIntervalos, repararMantenimientos, repararPerfil, repararPreferencias } from './reparacion-datos';
+import { normalizarInspeccion, normalizarRespaldo } from './validacion-datos';
+import type { RespaldoNormalizado } from './validacion-datos';
+
 const STORAGE_KEYS = {
   PERFIL: 'motocheck_perfil',
   MANTENIMIENTOS: 'motocheck_mantenimientos',
@@ -65,23 +69,19 @@ function ordenarBitacora(lista: RegistroMantenimiento[]): RegistroMantenimiento[
   return [...lista].sort((a, b) => b.fecha.localeCompare(a.fecha) || b.kilometraje - a.kilometraje);
 }
 
-/** RF19: valida la estructura mínima de un respaldo antes de importarlo. */
-export function esRespaldoValido(data: unknown): data is RespaldoMotoCheck {
-  if (!data || typeof data !== 'object') return false;
-  const r = data as Partial<RespaldoMotoCheck>;
-  const perfilOk =
-    r.perfil === null ||
-    (typeof r.perfil === 'object' &&
-      typeof r.perfil?.marca === 'string' &&
-      typeof r.perfil?.placa === 'string' &&
-      typeof r.perfil?.kilometrajeActual === 'number');
-  const mantOk =
-    Array.isArray(r.mantenimientos) &&
-    r.mantenimientos.every(
-      (m) => typeof m?.id === 'string' && typeof m?.kilometraje === 'number' && typeof m?.tipo === 'string',
-    );
-  const intOk = typeof r.intervalos?.intervalosKm === 'object' && typeof r.intervalos?.umbralAmarillo === 'number';
-  return perfilOk && mantOk && intOk;
+/** RF19: un respaldo es válido solo si todo su contenido lo es (ver validacion-datos.ts). */
+export function esRespaldoValido(data: unknown): boolean {
+  return normalizarRespaldo(data) !== null;
+}
+
+/** Lee un valor guardado; devuelve null si falta o si el JSON está dañado. */
+function leerJSON(valor: string | null): unknown {
+  if (!valor) return null;
+  try {
+    return JSON.parse(valor);
+  } catch {
+    return null;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -102,19 +102,20 @@ export class StorageService {
     return this.carga;
   }
 
+  /**
+   * Un valor ilegible (JSON dañado) se ignora para que la app siempre abra. Lo que se puede leer se
+   * repara sin descartar registros (ver reparacion-datos.ts).
+   */
   private async leerTodo(): Promise<void> {
     const [perfil, mant, intervalos, prefs, inspeccion] = await Promise.all(
       Object.values(STORAGE_KEYS).map((key) => Preferences.get({ key })),
     );
-    if (perfil.value) {
-      const p = JSON.parse(perfil.value) as PerfilMoto;
-      // Perfiles del avance 1 no tenían kilometrajeInicial.
-      this.perfil.set({ ...p, kilometrajeInicial: p.kilometrajeInicial ?? p.kilometrajeActual });
-    }
-    if (mant.value) this.mantenimientos.set(ordenarBitacora(JSON.parse(mant.value)));
-    if (intervalos.value) this.intervalos.set(JSON.parse(intervalos.value));
-    if (prefs.value) this.preferencias.set({ ...PREFERENCIAS_DEFAULT, ...JSON.parse(prefs.value) });
-    if (inspeccion.value) this.ultimaInspeccion.set(JSON.parse(inspeccion.value));
+    const p = repararPerfil(leerJSON(perfil.value));
+    if (p) this.perfil.set(p);
+    this.mantenimientos.set(ordenarBitacora(repararMantenimientos(leerJSON(mant.value))));
+    this.intervalos.set(repararIntervalos(leerJSON(intervalos.value)));
+    this.preferencias.set(repararPreferencias(leerJSON(prefs.value)));
+    this.ultimaInspeccion.set(normalizarInspeccion(leerJSON(inspeccion.value)) ?? null);
   }
 
   private escribir(key: string, value: unknown): Promise<void> {
@@ -201,32 +202,53 @@ export class StorageService {
     };
   }
 
-  /** RF19: reemplaza los datos actuales por los del respaldo. Devuelve false si el JSON no es válido. */
+  /**
+   * RF19: reemplaza TODOS los datos por los del respaldo, o no cambia nada.
+   * Devuelve false si el archivo no es válido o si no se pudo guardar (se restauran los datos anteriores).
+   */
   async restaurarRespaldo(json: string): Promise<boolean> {
-    let data: unknown;
+    let datos: RespaldoNormalizado | null;
     try {
-      data = JSON.parse(json);
+      datos = normalizarRespaldo(JSON.parse(json));
     } catch {
       return false;
     }
-    if (!esRespaldoValido(data)) return false;
+    if (!datos) return false;
 
-    if (data.perfil) {
-      await this.guardarPerfil({
-        ...data.perfil,
-        kilometrajeInicial: data.perfil.kilometrajeInicial ?? data.perfil.kilometrajeActual,
-      });
+    const nuevo: RespaldoNormalizado = { ...datos, mantenimientos: ordenarBitacora(datos.mantenimientos) };
+    const anterior = this.crearRespaldo();
+    try {
+      await this.escribirTodo(nuevo);
+    } catch {
+      try {
+        await this.escribirTodo(anterior);
+      } catch {
+        // Si tampoco se puede revertir, la memoria conserva los datos anteriores para exportarlos.
+      }
+      return false;
     }
-    const lista = ordenarBitacora(data.mantenimientos);
-    await this.escribir(STORAGE_KEYS.MANTENIMIENTOS, lista);
-    this.mantenimientos.set(lista);
-    await this.guardarIntervalos({
-      umbralAmarillo: data.intervalos.umbralAmarillo,
-      intervalosKm: { ...INTERVALOS_DEFAULT.intervalosKm, ...data.intervalos.intervalosKm },
-    });
-    if (data.preferencias) await this.guardarPreferencias(data.preferencias);
-    if (data.ultimaInspeccion) await this.guardarInspeccion(data.ultimaInspeccion);
+
+    this.perfil.set(nuevo.perfil);
+    this.mantenimientos.set(nuevo.mantenimientos);
+    this.intervalos.set(nuevo.intervalos);
+    this.preferencias.set(nuevo.preferencias);
+    this.ultimaInspeccion.set(nuevo.ultimaInspeccion);
     return true;
+  }
+
+  /** Escribe las cinco claves en orden; un valor null borra la clave. */
+  private async escribirTodo(d: Omit<RespaldoMotoCheck, 'version'>): Promise<void> {
+    const valores: [string, unknown][] = [
+      [STORAGE_KEYS.PERFIL, d.perfil],
+      [STORAGE_KEYS.MANTENIMIENTOS, d.mantenimientos],
+      [STORAGE_KEYS.INTERVALOS, d.intervalos],
+      [STORAGE_KEYS.PREFERENCIAS, d.preferencias ?? null],
+      [STORAGE_KEYS.INSPECCION, d.ultimaInspeccion ?? null],
+    ];
+    for (const [key, valor] of valores) {
+      if (valor === null) await Preferences.remove({ key });
+      else await this.escribir(key, valor);
+    }
   }
 
   /** Tamaño aproximado de los datos guardados, en bytes. */

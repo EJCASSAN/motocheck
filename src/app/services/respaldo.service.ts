@@ -4,6 +4,7 @@ import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 
 import { StorageService } from './storage.service';
+import { LIMITES_RESPALDO } from './validacion-datos';
 
 /** RF18 / RF19: respaldo de los datos en un archivo .json. */
 @Injectable({ providedIn: 'root' })
@@ -34,7 +35,13 @@ export class RespaldoService {
     await this.storage.guardarPreferencias({ ultimoRespaldo: new Date().toISOString() });
   }
 
+  /** Devuelve false (nunca lanza) si el archivo no se puede leer o no es un respaldo válido. */
   async importar(archivo: File): Promise<boolean> {
-    return this.storage.restaurarRespaldo(await archivo.text());
+    if (archivo.size > LIMITES_RESPALDO.bytesArchivo) return false;
+    try {
+      return await this.storage.restaurarRespaldo(await archivo.text());
+    } catch {
+      return false;
+    }
   }
 }
