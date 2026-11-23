@@ -1,4 +1,3 @@
-// @ts-check
 const ionic = require('@ionic/eslint-config/recommended');
 const angular = require('angular-eslint');
 const { defineConfig } = require('eslint/config');

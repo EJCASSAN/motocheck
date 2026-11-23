@@ -27,10 +27,6 @@ const STORAGE_KEYS = {
 
 const ORDEN_URGENCIA: Record<EstadoAlerta, number> = { vencido: 0, proximo: 1, optimo: 2 };
 
-/**
- * RF05: calcula el estado de cada mantenimiento periódico.
- * Base = km del último servicio de ese tipo; si no hay, el km con que se registró la moto.
- */
 export function calcularAlertas(
   perfil: PerfilMoto | null,
   mantenimientos: RegistroMantenimiento[],
@@ -64,17 +60,14 @@ export function calcularAlertas(
   }).sort((a, b) => ORDEN_URGENCIA[a.estado] - ORDEN_URGENCIA[b.estado] || b.porcentajeUso - a.porcentajeUso);
 }
 
-/** Orden de la bitácora: más reciente primero (fecha y luego km). */
 function ordenarBitacora(lista: RegistroMantenimiento[]): RegistroMantenimiento[] {
   return [...lista].sort((a, b) => b.fecha.localeCompare(a.fecha) || b.kilometraje - a.kilometraje);
 }
 
-/** RF19: un respaldo es válido solo si todo su contenido lo es (ver validacion-datos.ts). */
 export function esRespaldoValido(data: unknown): boolean {
   return normalizarRespaldo(data) !== null;
 }
 
-/** Lee un valor guardado; devuelve null si falta o si el JSON está dañado. */
 function leerJSON(valor: string | null): unknown {
   if (!valor) return null;
   try {
@@ -96,16 +89,11 @@ export class StorageService {
 
   private carga: Promise<void> | null = null;
 
-  /** Lee los datos del teléfono una sola vez; las demás llamadas esperan la misma promesa. */
   cargar(): Promise<void> {
     this.carga ??= this.leerTodo();
     return this.carga;
   }
 
-  /**
-   * Un valor ilegible (JSON dañado) se ignora para que la app siempre abra. Lo que se puede leer se
-   * repara sin descartar registros (ver reparacion-datos.ts).
-   */
   private async leerTodo(): Promise<void> {
     const [perfil, mant, intervalos, prefs, inspeccion] = await Promise.all(
       Object.values(STORAGE_KEYS).map((key) => Preferences.get({ key })),
@@ -122,16 +110,11 @@ export class StorageService {
     return Preferences.set({ key, value: JSON.stringify(value) });
   }
 
-  // ---- M1 Perfil ----
-
   async guardarPerfil(perfil: PerfilMoto): Promise<void> {
     await this.escribir(STORAGE_KEYS.PERFIL, perfil);
     this.perfil.set(perfil);
   }
 
-  // ---- M2 Odómetro ----
-
-  /** RF04: no acepta valores menores al odómetro actual. */
   async actualizarKilometraje(nuevoKm: number): Promise<boolean> {
     const actual = this.perfil();
     if (!actual || !Number.isFinite(nuevoKm) || nuevoKm < actual.kilometrajeActual) return false;
@@ -143,13 +126,10 @@ export class StorageService {
     return true;
   }
 
-  // ---- M3 Bitácora ----
-
   obtenerMantenimiento(id: string): RegistroMantenimiento | undefined {
     return this.mantenimientos().find((m) => m.id === id);
   }
 
-  /** RF08 (sin id) y RF12 (con id): guarda el servicio y adelanta el odómetro si hace falta. */
   async guardarMantenimiento(datos: Omit<RegistroMantenimiento, 'id'>, id?: string): Promise<RegistroMantenimiento> {
     const registro: RegistroMantenimiento = { ...datos, id: id ?? Date.now().toString(36) };
     const otros = this.mantenimientos().filter((m) => m.id !== registro.id);
@@ -171,14 +151,10 @@ export class StorageService {
     this.mantenimientos.set(lista);
   }
 
-  // ---- M4 Inspección ----
-
   async guardarInspeccion(inspeccion: Inspeccion): Promise<void> {
     await this.escribir(STORAGE_KEYS.INSPECCION, inspeccion);
     this.ultimaInspeccion.set(inspeccion);
   }
-
-  // ---- M5 Configuración y datos ----
 
   async guardarIntervalos(config: ConfiguracionIntervalos): Promise<void> {
     await this.escribir(STORAGE_KEYS.INTERVALOS, config);
@@ -202,10 +178,6 @@ export class StorageService {
     };
   }
 
-  /**
-   * RF19: reemplaza TODOS los datos por los del respaldo, o no cambia nada.
-   * Devuelve false si el archivo no es válido o si no se pudo guardar (se restauran los datos anteriores).
-   */
   async restaurarRespaldo(json: string): Promise<boolean> {
     let datos: RespaldoNormalizado | null;
     try {
@@ -220,11 +192,7 @@ export class StorageService {
     try {
       await this.escribirTodo(nuevo);
     } catch {
-      try {
-        await this.escribirTodo(anterior);
-      } catch {
-        // Si tampoco se puede revertir, la memoria conserva los datos anteriores para exportarlos.
-      }
+      await this.escribirTodo(anterior).catch(() => undefined);
       return false;
     }
 
@@ -236,7 +204,6 @@ export class StorageService {
     return true;
   }
 
-  /** Escribe las cinco claves en orden; un valor null borra la clave. */
   private async escribirTodo(d: Omit<RespaldoMotoCheck, 'version'>): Promise<void> {
     const valores: [string, unknown][] = [
       [STORAGE_KEYS.PERFIL, d.perfil],
@@ -251,12 +218,10 @@ export class StorageService {
     }
   }
 
-  /** Tamaño aproximado de los datos guardados, en bytes. */
   tamanoDatos(): number {
     return new Blob([JSON.stringify(this.crearRespaldo())]).size;
   }
 
-  /** RF20 */
   async borrarTodosLosDatos(): Promise<void> {
     await Promise.all(Object.values(STORAGE_KEYS).map((key) => Preferences.remove({ key })));
     this.perfil.set(null);

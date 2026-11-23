@@ -1,6 +1,3 @@
-// MotoCheck – tema oscuro de los mockups.
-// Las fuentes van incluidas en la app para que funcione sin internet (RNF02).
-
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -79,8 +76,6 @@
   --ion-color-danger-tint: #ff7a7a;
 }
 
-// ---------- Piezas compartidas por todas las pantallas ----------
-
 .mc-page {
   display: flex;
   flex-direction: column;
@@ -137,7 +132,6 @@ h2.mc-section {
   gap: 12px;
 }
 
-// Barra superior propia (como en los mockups): título + engranaje / volver.
 .mc-topbar {
   display: flex;
   align-items: center;
@@ -216,7 +210,6 @@ h2.mc-section {
   }
 }
 
-// Campos de formulario
 .mc-field {
   display: flex;
   flex-direction: column;
@@ -302,7 +295,6 @@ textarea.mc-input {
   gap: 12px;
 }
 
-// Chips de filtro
 .mc-chips {
   display: flex;
   gap: 8px;
@@ -331,7 +323,6 @@ textarea.mc-input {
   }
 }
 
-// Estado (badge) y barra de progreso
 .mc-badge {
   padding: 4px 10px;
   border-radius: 999px;
@@ -395,7 +386,6 @@ textarea.mc-input {
   }
 }
 
-// Modales tipo "hoja" que suben desde abajo
 ion-modal.mc-sheet {
   --border-radius: 24px;
   --background: #12151a;

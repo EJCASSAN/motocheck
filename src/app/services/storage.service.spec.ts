@@ -37,11 +37,11 @@ describe('calcularAlertas (RF05)', () => {
     );
     const porTipo = Object.fromEntries(alertas.map((a) => [a.tipo, a]));
 
-    expect(porTipo['aceite'].estado).toBe('vencido'); // 3.250 de 3.000 km
+    expect(porTipo['aceite'].estado).toBe('vencido');
     expect(porTipo['aceite'].kmRecorridos).toBe(3250);
-    expect(porTipo['cadena'].estado).toBe('proximo'); // faltan 650 km (86 %)
+    expect(porTipo['cadena'].estado).toBe('proximo');
     expect(porTipo['cadena'].kmRestantes).toBe(650);
-    expect(porTipo['frenos'].estado).toBe('optimo'); // faltan 8.950 km
+    expect(porTipo['frenos'].estado).toBe('optimo');
     expect(porTipo['frenos'].kmRestantes).toBe(8950);
   });
 
@@ -54,7 +54,7 @@ describe('calcularAlertas (RF05)', () => {
   it('respeta el umbral de aviso configurado', () => {
     const config = { ...INTERVALOS_DEFAULT, umbralAmarillo: 90 as const };
     const cadena = calcularAlertas(perfil, [servicio('cadena', 30400)], config).find((a) => a.tipo === 'cadena');
-    expect(cadena?.estado).toBe('optimo'); // 86 % < 90 %
+    expect(cadena?.estado).toBe('optimo');
   });
 
   it('ordena por urgencia: vencidos primero', () => {

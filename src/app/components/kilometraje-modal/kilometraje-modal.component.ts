@@ -8,7 +8,6 @@ import { haceCuanto, miles } from '../../utils/formato';
 
 const MAX_DIGITOS = 7;
 
-/** Mockup 6 · Modal "Actualizar kilometraje" con teclado numérico (RF04). */
 @Component({
   selector: 'app-kilometraje-modal',
   templateUrl: './kilometraje-modal.component.html',

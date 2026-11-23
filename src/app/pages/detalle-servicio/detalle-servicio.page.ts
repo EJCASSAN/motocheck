@@ -7,7 +7,6 @@ import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { fechaLocal, miles } from '../../utils/formato';
 
-/** Mockup 7 · Detalle de servicio (RF11 ver, RF12 editar, RF13 eliminar). */
 @Component({
   selector: 'app-detalle-servicio',
   templateUrl: './detalle-servicio.page.html',
@@ -22,7 +21,6 @@ export class DetalleServicioPage {
 
   private readonly id = signal('');
 
-  /** Parámetro :id de la ruta /servicio/:id. */
   @Input() set servicioId(valor: string) {
     this.id.set(valor);
   }

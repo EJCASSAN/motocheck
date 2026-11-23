@@ -15,7 +15,6 @@ interface GrupoMes {
   items: RegistroMantenimiento[];
 }
 
-/** Quita tildes y pasa a minúsculas para buscar sin importar cómo se escriba. */
 function normalizar(texto: string): string {
   return texto
     .normalize('NFD')
@@ -23,7 +22,6 @@ function normalizar(texto: string): string {
     .toLowerCase();
 }
 
-/** Mockup 4 · Bitácora (RF09 historial, RF10 buscar y filtrar). Pestaña 2. */
 @Component({
   selector: 'app-bitacora',
   templateUrl: './bitacora.page.html',
@@ -43,7 +41,6 @@ export class BitacoraPage {
   readonly busqueda = signal('');
   readonly filtro = signal<Filtro>('todos');
 
-  /** Solo se muestran chips de categorías que tienen registros. */
   readonly chips = computed(() => {
     const usados = new Set(this.storage.mantenimientos().map((m) => m.tipo));
     const tipos = (Object.keys(ETIQUETAS_CORTAS) as TipoMantenimiento[]).filter((t) => usados.has(t));

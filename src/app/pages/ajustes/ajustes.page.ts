@@ -9,7 +9,6 @@ import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { fechaLocal, formatoPlaca, miles } from '../../utils/formato';
 
-/** Mockup 9 · Ajustes y perfil (RF03 acceso, RF07 avisos, RF18-RF21 datos). */
 @Component({
   selector: 'app-ajustes',
   templateUrl: './ajustes.page.html',
@@ -37,7 +36,6 @@ export class AjustesPage {
   });
 
   readonly espacio = computed(() => {
-    // Se recalcula cuando cambian los datos.
     this.storage.mantenimientos();
     this.perfil();
     return Math.max(1, Math.round(this.storage.tamanoDatos() / 1024));
@@ -57,7 +55,6 @@ export class AjustesPage {
   }
 
   async cambiarRespaldoAutomatico(evento: CustomEvent<{ checked: boolean }>): Promise<void> {
-    // RF21 pendiente: por ahora solo se guarda la preferencia.
     await this.storage.guardarPreferencias({ respaldoAutomatico: evento.detail.checked });
     await this.ui.aviso('El respaldo automático estará disponible en la versión final.', 'warning');
   }
@@ -67,7 +64,6 @@ export class AjustesPage {
       await this.respaldo.exportar();
       await this.ui.aviso('Respaldo exportado.');
     } catch {
-      // El usuario cerró el menú de compartir o falló la escritura.
       await this.ui.aviso('No se exportó el respaldo.', 'warning');
     }
   }

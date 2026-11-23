@@ -9,12 +9,6 @@ import type {
   TipoMantenimiento,
 } from '../models/motocheck.models';
 
-/**
- * Reglas ESTRICTAS para importar un respaldo (RF19): cualquier dato inválido rechaza el archivo.
- * Para leer lo que ya está guardado en el teléfono se usa reparacion-datos.ts, que nunca descarta.
- */
-
-/** Datos de un respaldo listos para guardar: todo validado y completo. */
 export interface RespaldoNormalizado {
   perfil: PerfilMoto;
   mantenimientos: RegistroMantenimiento[];
@@ -23,11 +17,10 @@ export interface RespaldoNormalizado {
   ultimaInspeccion: Inspeccion | null;
 }
 
-/** Límites del respaldo: un archivo enorme haría lenta la app en cada inicio. */
 export const LIMITES_RESPALDO = {
   bytesArchivo: 2 * 1024 * 1024,
   servicios: 5000,
-  textoCorto: 50, // marca, modelo, placa
+  textoCorto: 50,
   notas: 500,
 } as const;
 
@@ -47,7 +40,6 @@ export function esNumeroNoNegativo(valor: unknown): valor is number {
   return typeof valor === 'number' && Number.isFinite(valor) && valor >= 0;
 }
 
-/** Fecha y hora ISO 8601 completa (como la produce Date.toISOString). */
 export function esFechaHoraISO(valor: unknown): valor is string {
   return typeof valor === 'string' && FECHA_HORA_REGEX.test(valor) && !Number.isNaN(Date.parse(valor));
 }
@@ -56,7 +48,6 @@ function esTexto(valor: unknown, maximo: number): valor is string {
   return typeof valor === 'string' && valor.trim().length > 0 && valor.length <= maximo;
 }
 
-/** Perfil completo; completa kilometrajeInicial en perfiles del primer prototipo. */
 export function normalizarPerfil(valor: unknown): PerfilMoto | null {
   if (!esObjeto(valor)) return null;
   const { marca, modelo, placa, cilindraje, kilometrajeActual, kilometrajeInicial, ultimaActualizacionKm } = valor;
@@ -99,7 +90,6 @@ export function normalizarMantenimiento(valor: unknown): RegistroMantenimiento |
   };
 }
 
-/** Todos los servicios válidos, sin ids repetidos y como máximo LIMITES_RESPALDO.servicios. */
 export function normalizarMantenimientos(valor: unknown): RegistroMantenimiento[] | null {
   if (!Array.isArray(valor) || valor.length > LIMITES_RESPALDO.servicios) return null;
   const lista = valor.map(normalizarMantenimiento);
@@ -108,7 +98,6 @@ export function normalizarMantenimientos(valor: unknown): RegistroMantenimiento[
   return ids.size === lista.length ? lista : null;
 }
 
-/** Umbral 70/80/90 e intervalos > 0 km; los tipos que falten toman el valor por defecto. */
 export function normalizarIntervalos(valor: unknown): ConfiguracionIntervalos | null {
   if (!esObjeto(valor) || !UMBRALES.includes(valor['umbralAmarillo'] as number)) return null;
   const km = valor['intervalosKm'];
@@ -116,7 +105,6 @@ export function normalizarIntervalos(valor: unknown): ConfiguracionIntervalos | 
   const intervalosKm = { ...INTERVALOS_DEFAULT.intervalosKm };
   for (const tipo of TIPOS_PERIODICOS) {
     if (km[tipo] === undefined) continue;
-    // > 0 (no >= 500): intervalos del primer prototipo como 300 km deben poder importarse.
     if (!esNumeroNoNegativo(km[tipo]) || km[tipo] === 0) return null;
     intervalosKm[tipo] = km[tipo];
   }
@@ -137,7 +125,6 @@ export function normalizarPreferencias(valor: unknown): Preferencias | null {
   };
 }
 
-/** `undefined` = inspección inválida; `null` = no hay inspección. Solo copia los campos conocidos. */
 export function normalizarInspeccion(valor: unknown): Inspeccion | null | undefined {
   if (valor === undefined || valor === null) return null;
   if (!esObjeto(valor) || !esFechaHoraISO(valor['fecha']) || !esObjeto(valor['resultados'])) return undefined;
@@ -151,10 +138,8 @@ export function normalizarInspeccion(valor: unknown): Inspeccion | null | undefi
   return { fecha: valor['fecha'], resultados };
 }
 
-/** RF19: valida el respaldo completo. Devuelve null si cualquier parte es inválida. */
 export function normalizarRespaldo(data: unknown): RespaldoNormalizado | null {
   if (!esObjeto(data)) return null;
-  // El primer prototipo exportaba sin versión.
   if (data['version'] !== undefined && data['version'] !== 1) return null;
 
   const perfil = normalizarPerfil(data['perfil']);

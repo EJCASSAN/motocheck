@@ -116,7 +116,6 @@ describe('Restaurar respaldo de forma segura (local-data)', () => {
   });
 
   it('G3: si falla una escritura a mitad del proceso, vuelven los datos anteriores', async () => {
-    // En web, Preferences escribe en localStorage: la tercera escritura falla.
     const original = Storage.prototype.setItem;
     let llamadas = 0;
     const espia = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, k, v) {
@@ -128,7 +127,6 @@ describe('Restaurar respaldo de forma segura (local-data)', () => {
     expect(await storage.restaurarRespaldo(respaldo())).toBe(false);
     espia.mockRestore();
 
-    // Lo que importa es el disco: una instancia nueva lee lo que quedó guardado.
     TestBed.resetTestingModule();
     const recargado = TestBed.inject(StorageService);
     await recargado.cargar();

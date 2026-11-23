@@ -5,7 +5,6 @@ import { KilometrajeModalComponent } from '../components/kilometraje-modal/kilom
 import { ServicioFormComponent } from '../components/servicio-form/servicio-form.component';
 import type { RegistroMantenimiento, TipoMantenimiento } from '../models/motocheck.models';
 
-/** Abre los modales que se usan desde varias pantallas (ver mapa de navegación). */
 @Injectable({ providedIn: 'root' })
 export class ModalesService {
   private modales = inject(ModalController);

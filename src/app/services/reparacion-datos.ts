@@ -10,12 +10,6 @@ import type {
 
 import { TIPOS, UMBRALES, esObjeto } from './validacion-datos';
 
-/**
- * Lectura TOLERANTE de lo que ya está guardado en el teléfono (puede venir del primer prototipo,
- * que no validaba). Regla: reparar lo mínimo para que la app funcione y NUNCA descartar un registro,
- * porque el siguiente guardado reescribe la clave completa y lo descartado se perdería para siempre.
- */
-
 function numeroFinito(valor: unknown, porDefecto: number): number {
   return typeof valor === 'number' && Number.isFinite(valor) ? valor : porDefecto;
 }
@@ -24,7 +18,6 @@ function texto(valor: unknown): string {
   return typeof valor === 'string' ? valor : valor === undefined || valor === null ? '' : String(valor);
 }
 
-/** null solo si no hay forma de usarlo (no es objeto o no tiene kilometraje actual). */
 export function repararPerfil(valor: unknown): PerfilMoto | null {
   if (!esObjeto(valor)) return null;
   const actual = valor['kilometrajeActual'];
@@ -35,14 +28,12 @@ export function repararPerfil(valor: unknown): PerfilMoto | null {
     placa: texto(valor['placa']),
     cilindraje: numeroFinito(valor['cilindraje'], 0),
     kilometrajeActual: actual,
-    // Perfiles del avance 1 no tenían kilometrajeInicial.
     kilometrajeInicial: numeroFinito(valor['kilometrajeInicial'], actual),
     ultimaActualizacionKm:
       typeof valor['ultimaActualizacionKm'] === 'string' ? valor['ultimaActualizacionKm'] : new Date(0).toISOString(),
   };
 }
 
-/** Conserva cada servicio que sea un objeto; solo se descartan valores que no son registros. */
 export function repararMantenimientos(valor: unknown): RegistroMantenimiento[] {
   if (!Array.isArray(valor)) return [];
   return valor.filter(esObjeto).map((m, i) => ({
@@ -55,7 +46,6 @@ export function repararMantenimientos(valor: unknown): RegistroMantenimiento[] {
   }));
 }
 
-/** Cada intervalo inválido (0, negativo, no numérico) toma su valor por defecto; los demás se conservan. */
 export function repararIntervalos(valor: unknown): ConfiguracionIntervalos {
   const config: ConfiguracionIntervalos = {
     umbralAmarillo: INTERVALOS_DEFAULT.umbralAmarillo,

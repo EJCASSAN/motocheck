@@ -1,4 +1,3 @@
-/** Mantenimientos con intervalo en km (se calculan alertas para ellos). */
 export type TipoServicioPeriodico = 'aceite' | 'cadena' | 'frenos' | 'filtros' | 'bujias' | 'kit_arrastre';
 
 export type TipoMantenimiento = TipoServicioPeriodico | 'otro';
@@ -14,12 +13,12 @@ export interface PerfilMoto {
   placa: string;
   kilometrajeInicial: number;
   kilometrajeActual: number;
-  ultimaActualizacionKm: string; // ISO date
+  ultimaActualizacionKm: string;
 }
 
 export interface RegistroMantenimiento {
   id: string;
-  fecha: string; // YYYY-MM-DD
+  fecha: string;
   kilometraje: number;
   tipo: TipoMantenimiento;
   costo: number;
@@ -34,7 +33,7 @@ export interface ConfiguracionIntervalos {
 export interface Preferencias {
   avisosActivos: boolean;
   respaldoAutomatico: boolean;
-  ultimoRespaldo: string | null; // ISO date
+  ultimoRespaldo: string | null;
 }
 
 export interface AlertaMantenimiento {
@@ -56,14 +55,12 @@ export interface ItemChecklist {
   nombre: string;
   ayuda: string;
   icono: string;
-  /** Qué hacer si el punto no se aprueba. */
   recomendacion: string;
-  /** Servicio de la bitácora que corrige la falla. */
   servicioRelacionado: TipoMantenimiento;
 }
 
 export interface Inspeccion {
-  fecha: string; // ISO date
+  fecha: string;
   resultados: Record<PuntoChecklist, ResultadoPunto>;
 }
 

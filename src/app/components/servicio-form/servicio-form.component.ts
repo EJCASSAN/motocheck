@@ -11,10 +11,6 @@ import { hoyISO } from '../../utils/formato';
 
 const TIPOS: TipoMantenimiento[] = ['aceite', 'cadena', 'frenos', 'filtros', 'bujias', 'kit_arrastre', 'otro'];
 
-/**
- * Mockup 3 · Modal "Nuevo servicio".
- * RF08 registrar servicio (con tipo precargado) y RF12 editar servicio (si recibe `registro`).
- */
 @Component({
   selector: 'app-servicio-form',
   templateUrl: './servicio-form.component.html',

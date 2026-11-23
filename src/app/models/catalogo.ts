@@ -25,7 +25,6 @@ export const NOMBRES_SERVICIO: Record<TipoMantenimiento, string> = {
   otro: 'Otro servicio',
 };
 
-/** Etiqueta corta para chips y botones. */
 export const ETIQUETAS_CORTAS: Record<TipoMantenimiento, string> = {
   aceite: 'Aceite',
   cadena: 'Cadena',
@@ -36,7 +35,6 @@ export const ETIQUETAS_CORTAS: Record<TipoMantenimiento, string> = {
   otro: 'Otro',
 };
 
-/** Nombres de ionicons (registrados en main.ts). */
 export const ICONOS_SERVICIO: Record<TipoMantenimiento, string> = {
   aceite: 'water-outline',
   cadena: 'link-outline',
@@ -47,7 +45,6 @@ export const ICONOS_SERVICIO: Record<TipoMantenimiento, string> = {
   otro: 'build-outline',
 };
 
-/** Paso de los botones − / + en la pantalla de intervalos. */
 export const PASO_INTERVALO: Record<TipoServicioPeriodico, number> = {
   aceite: 500,
   cadena: 500,

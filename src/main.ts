@@ -56,7 +56,6 @@ import { routes } from './app/app.routes';
 
 registerLocaleData(localeEsCO);
 
-// Íconos usados en las plantillas (nombre en kebab-case dentro del HTML).
 addIcons({
   addOutline,
   arrowForwardOutline,

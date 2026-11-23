@@ -6,7 +6,6 @@ import { Share } from '@capacitor/share';
 import { StorageService } from './storage.service';
 import { LIMITES_RESPALDO } from './validacion-datos';
 
-/** RF18 / RF19: respaldo de los datos en un archivo .json. */
 @Injectable({ providedIn: 'root' })
 export class RespaldoService {
   private storage = inject(StorageService);
@@ -16,7 +15,6 @@ export class RespaldoService {
     const nombre = `motocheck-respaldo-${new Date().toISOString().slice(0, 10)}.json`;
 
     if (Capacitor.isNativePlatform()) {
-      // En el teléfono se escribe en caché y se abre el menú "Compartir" (Drive, WhatsApp, Archivos...).
       const archivo = await Filesystem.writeFile({
         path: nombre,
         data: json,
@@ -35,7 +33,6 @@ export class RespaldoService {
     await this.storage.guardarPreferencias({ ultimoRespaldo: new Date().toISOString() });
   }
 
-  /** Devuelve false (nunca lanza) si el archivo no se puede leer o no es un respaldo válido. */
   async importar(archivo: File): Promise<boolean> {
     if (archivo.size > LIMITES_RESPALDO.bytesArchivo) return false;
     try {

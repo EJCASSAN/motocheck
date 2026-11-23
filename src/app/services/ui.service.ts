@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 
-/** RNF07: mensajes de confirmación y diálogos antes de borrar. */
 @Injectable({ providedIn: 'root' })
 export class UiService {
   private toasts = inject(ToastController);

@@ -9,6 +9,5 @@ import { AvisosService } from './services/avisos.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  // Se crea al iniciar para vigilar las alertas durante toda la sesión (RF07).
   private avisos = inject(AvisosService);
 }

@@ -7,10 +7,6 @@ import { StorageService } from './storage.service';
 
 const GRAVEDAD: Record<EstadoAlerta, number> = { optimo: 0, proximo: 1, vencido: 2 };
 
-/**
- * RF07: envía una notificación local cuando un mantenimiento empeora de estado
- * (Al día -> Próximo, o -> Vencido). El primer cálculo solo sirve de base.
- */
 @Injectable({ providedIn: 'root' })
 export class AvisosService {
   private storage = inject(StorageService);
@@ -34,7 +30,6 @@ export class AvisosService {
     });
   }
 
-  /** Pide permiso al activar los avisos. Devuelve false si el usuario lo niega. */
   async solicitarPermiso(): Promise<boolean> {
     try {
       const estado = await LocalNotifications.requestPermissions();
@@ -60,7 +55,7 @@ export class AvisosService {
         })),
       });
     } catch {
-      // Sin soporte de notificaciones (p. ej. navegador sin permiso): la alerta sigue visible en Inicio.
+      return;
     }
   }
 }

@@ -16,7 +16,6 @@ import { miles } from '../../utils/formato';
 
 const INTERVALO_MAXIMO_KM = 100_000;
 
-/** Mockup 10 · Intervalos de servicio (RF17). */
 @Component({
   selector: 'app-intervalos',
   templateUrl: './intervalos.page.html',

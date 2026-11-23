@@ -14,7 +14,6 @@ const ETIQUETA_ESTADO: Record<EstadoAlerta, string> = {
   optimo: 'Al día',
 };
 
-/** Mockup 2 · Inicio / Dashboard (RF05, RF06). Pestaña 1. */
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.page.html',

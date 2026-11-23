@@ -9,18 +9,12 @@ import { StorageService } from '../../services/storage.service';
 import { UiService } from '../../services/ui.service';
 import { formatoPlaca } from '../../utils/formato';
 
-/** Igual al límite de textos del respaldo, para que todo lo que se guarda se pueda importar. */
 const MAX_TEXTO = 50;
 
-/** Placa de moto en Colombia: ABC12D (actual) o ABC12 (antigua). */
 const PLACA_REGEX = /^[A-Z]{3}\d{2}[A-Z]?$/;
 
 type Campo = 'marca' | 'modelo' | 'cilindraje' | 'placa' | 'kilometraje';
 
-/**
- * Mockup 1 · Registro inicial (RF01, RF02).
- * Con la ruta /editar-moto (data.modo = 'editar') se usa para editar el perfil (RF03).
- */
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.page.html',
@@ -28,7 +22,6 @@ type Campo = 'marca' | 'modelo' | 'cilindraje' | 'placa' | 'kilometraje';
   imports: [FormsModule, IonContent, IonIcon],
 })
 export class RegistroPage implements OnInit {
-  /** Viene de la configuración de la ruta (withComponentInputBinding). */
   @Input() modo: 'registro' | 'editar' = 'registro';
 
   private storage = inject(StorageService);

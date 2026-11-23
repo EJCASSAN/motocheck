@@ -11,7 +11,6 @@ type Resultados = Record<PuntoChecklist, ResultadoPunto>;
 
 const VACIO: Resultados = { llantas: null, aceite: null, cadena: null, frenos: null, luces: null };
 
-/** Mockup 5 · Checklist pre-ruta (RF14). Pestaña 3. */
 @Component({
   selector: 'app-checklist',
   templateUrl: './checklist.page.html',
@@ -36,7 +35,6 @@ export class ChecklistPage {
       .join(', '),
   );
 
-  /** Tocar el mismo botón otra vez deja el punto sin revisar. */
   marcar(id: PuntoChecklist, valor: Exclude<ResultadoPunto, null>): void {
     this.resultados.update((r) => ({ ...r, [id]: r[id] === valor ? null : valor }));
   }
@@ -50,7 +48,6 @@ export class ChecklistPage {
       await this.ui.aviso(`Revisa los ${this.pendientes()} puntos pendientes antes de finalizar.`, 'warning');
       return;
     }
-    // RF16: se guarda la inspección para poder consultarla luego.
     await this.storage.guardarInspeccion({ fecha: new Date().toISOString(), resultados: this.resultados() });
     await this.router.navigateByUrl('/diagnostico');
     this.reiniciar();

@@ -13,7 +13,6 @@ interface Falla {
   ultimoServicio: string;
 }
 
-/** Mockup 8 · Resumen de diagnóstico (RF15) a partir de la última inspección guardada (RF16). */
 @Component({
   selector: 'app-diagnostico',
   templateUrl: './diagnostico.page.html',
